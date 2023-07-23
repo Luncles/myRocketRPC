@@ -24,7 +24,8 @@ namespace myRocket
         return gLogger;
     }
 
-    void Logger::InitGlobalLogger(int type) {
+    void Logger::InitGlobalLogger(int type)
+    {
         LogLevel globalLogLevel = StringToLogLevel(Config::GetGlobalConfig()->myLogLevel);
         printf("Initial gLogger [%s]\n", LogLevelToString(globalLogLevel).c_str());
         gLogger = new Logger(globalLogLevel);
@@ -32,21 +33,21 @@ namespace myRocket
 
     void Logger::PushLog(const std::string &msg)
     {
-        ScopeMutex<pMutex> scopeMutex(myMutex);       //加锁
+        ScopeMutex<pMutex> scopeMutex(myMutex); // 加锁
         myBuffer.push(msg);
         if (myBuffer.empty())
         {
             printf("push failure\n");
         }
-        scopeMutex.unlock();                         // 解锁
+        scopeMutex.unlock(); // 解锁
     }
 
     void Logger::Log()
     {
-        ScopeMutex<pMutex> scopeMutex(myMutex);     // 加锁
-        std::queue<std::string> tmp;                // 尽量减小锁的粒度
+        ScopeMutex<pMutex> scopeMutex(myMutex); // 加锁
+        std::queue<std::string> tmp;            // 尽量减小锁的粒度
         myBuffer.swap(tmp);
-        scopeMutex.unlock();                        // 解锁
+        scopeMutex.unlock(); // 解锁
 
         while (!tmp.empty())
         {
@@ -76,19 +77,24 @@ namespace myRocket
         }
     }
 
-    LogLevel StringToLogLevel(const std::string& loglevelStr) {
+    LogLevel StringToLogLevel(const std::string &loglevelStr)
+    {
         // 字符串比较不能用switch
-        if (loglevelStr == "DEBUG") {
+        if (loglevelStr == "DEBUG")
+        {
             return DEBUG;
         }
-        else if (loglevelStr == "INFO") {
+        else if (loglevelStr == "INFO")
+        {
             return INFO;
         }
-        else if (loglevelStr == "ERROR") {
+        else if (loglevelStr == "ERROR")
+        {
             return ERROR;
         }
-        else {
-            return UNKNOWN; 
+        else
+        {
+            return UNKNOWN;
         }
     }
 
@@ -112,8 +118,7 @@ namespace myRocket
         std::stringstream ss;
         ss << "[" << LogLevelToString(myLevel) << "]\t"
            << "[" << timeStr << "]\t"
-           << "[" << std::to_string(myPID) << " : " << std::to_string(myThreadID) << "]\t"
-           << "[" << std::string(__FILE__) << " : " << __LINE__ << "]\t";
+           << "[" << std::to_string(myPID) << " : " << std::to_string(myThreadID) << "]\t";
 
         return ss.str();
     }

@@ -61,29 +61,29 @@ namespace myRocket
 
     // 一些转换函数
     std::string LogLevelToString(LogLevel);
-    LogLevel StringToLogLevel(const std::string& loglevelStr);
+    LogLevel StringToLogLevel(const std::string &loglevelStr);
 
-#define DEBUGLOG(str, ...)                                                                                                           \
-    if (myRocket::Logger::GetGlobalLogger()->GetMySetLevel() <= myRocket::DEBUG) \
-    { \
-        myRocket::Logger::GetGlobalLogger()->PushLog(myRocket::LogEvent(myRocket::LogLevel::DEBUG).toString() + myRocket::FormatString(str, ##__VA_ARGS__) + "\n");   \
-        myRocket::Logger::GetGlobalLogger()->Log(); \
-    } \
-    
-#define INFOLOG(str, ...)                                                                                                            \
-    if (myRocket::Logger::GetGlobalLogger()->GetMySetLevel() <= myRocket::INFO) \
-    { \
-        myRocket::Logger::GetGlobalLogger()->PushLog(myRocket::LogEvent(myRocket::LogLevel::INFO).toString() + myRocket::FormatString(str, ##__VA_ARGS__) + "\n");    \
-        myRocket::Logger::GetGlobalLogger()->Log(); \
-    } \
-    
-#define ERRORLOG(str, ...)                                                       \
-    if (myRocket::Logger::GetGlobalLogger()->GetMySetLevel() <= myRocket::ERROR ) \
-    { \
-        myRocket::Logger::GetGlobalLogger()->PushLog(myRocket::LogEvent(myRocket::LogLevel::ERROR).toString() + myRocket::FormatString(str, ##__VA_ARGS__) + "\n");   \
-        myRocket::Logger::GetGlobalLogger()->Log(); \
-    } \
-   
+#define DEBUGLOG(str, ...)                                                                                                                                                                                                                   \
+    if (myRocket::Logger::GetGlobalLogger()->GetMySetLevel() <= myRocket::DEBUG)                                                                                                                                                             \
+    {                                                                                                                                                                                                                                        \
+        myRocket::Logger::GetGlobalLogger()->PushLog(myRocket::LogEvent(myRocket::LogLevel::DEBUG).toString() + "[" + std::string(__FILE__) + " : " + std::to_string(__LINE__) + "]\t" + myRocket::FormatString(str, ##__VA_ARGS__) + "\n"); \
+        myRocket::Logger::GetGlobalLogger()->Log();                                                                                                                                                                                          \
+    }
+
+#define INFOLOG(str, ...)                                                                                                                                                                                                                   \
+    if (myRocket::Logger::GetGlobalLogger()->GetMySetLevel() <= myRocket::INFO)                                                                                                                                                             \
+    {                                                                                                                                                                                                                                       \
+        myRocket::Logger::GetGlobalLogger()->PushLog(myRocket::LogEvent(myRocket::LogLevel::INFO).toString() + "[" + std::string(__FILE__) + " : " + std::to_string(__LINE__) + "]\t" + myRocket::FormatString(str, ##__VA_ARGS__) + "\n"); \
+        myRocket::Logger::GetGlobalLogger()->Log();                                                                                                                                                                                         \
+    }
+
+#define ERRORLOG(str, ...)                                                                                                                                                                                                                   \
+    if (myRocket::Logger::GetGlobalLogger()->GetMySetLevel() <= myRocket::ERROR)                                                                                                                                                             \
+    {                                                                                                                                                                                                                                        \
+        myRocket::Logger::GetGlobalLogger()->PushLog(myRocket::LogEvent(myRocket::LogLevel::ERROR).toString() + "[" + std::string(__FILE__) + " : " + std::to_string(__LINE__) + "]\t" + myRocket::FormatString(str, ##__VA_ARGS__) + "\n"); \
+        myRocket::Logger::GetGlobalLogger()->Log();                                                                                                                                                                                          \
+    }
+
     /*日志器*/
     class Logger
     {
@@ -92,12 +92,11 @@ namespace myRocket
 
         static void InitGlobalLogger(int type = 1); // 初始化日志器函数
 
-
     public:
         using sptrLoger = std::shared_ptr<Logger>;
 
         // 构造函数
-        Logger(LogLevel loglevel) : mySetLevel(loglevel) { }
+        Logger(LogLevel loglevel) : mySetLevel(loglevel) {}
 
         LogLevel GetLogLevel() const
         {
@@ -110,16 +109,15 @@ namespace myRocket
 
         void Log(); // 打印日志
 
-        LogLevel GetMySetLevel() {
+        LogLevel GetMySetLevel()
+        {
             return mySetLevel;
         }
 
-        
-
     private:
         LogLevel mySetLevel;
-        std::queue<std::string> myBuffer;       // 共享内存，注意线程安全
-        pMutex myMutex;          // 互斥锁
+        std::queue<std::string> myBuffer; // 共享内存，注意线程安全
+        pMutex myMutex;                   // 互斥锁
 
         std::string myFileName; // 日志输出文件名字
         std::string myFilePath; // 日志输出路径

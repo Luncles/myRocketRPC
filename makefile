@@ -8,15 +8,14 @@ PATH_BIN = bin
 PATH_LIB = lib
 PATH_OBJ = obj
 
-PATH_ROCKET = /root/Code/myRocketRPC
-PATH_ABSOLUTE = /root/Code
+PATH_ROCKET = /home/luncles/myRocketRPC
 PATH_COMM = $(PATH_ROCKET)/common
 PATH_NET = $(PATH_ROCKET)/net
 PATH_TCP = $(PATH_ROCKET)/net/tcp
 PATH_CODER = $(PATH_ROCKET)/net/coder
 PATH_RPC = $(PATH_ROCKET)/net/rpc
 
-PATH_TESTCASES = /root/Code/myRocketRPC/testcases
+PATH_TESTCASES = /home/luncles/myRocketRPC/testcases
 
 # will install lib to /usr/lib/librocket.a
 PATH_INSTALL_LIB_ROOT = /usr/lib
@@ -50,19 +49,19 @@ NET_OBJ := $(patsubst $(PATH_NET)/%.cc, $(PATH_OBJ)/%.o, $(wildcard $(PATH_NET)/
 # CODER_OBJ := $(patsubst $(PATH_CODER)/%.cc, $(PATH_OBJ)/%.o, $(wildcard $(PATH_CODER)/*.cc))
 # RPC_OBJ := $(patsubst $(PATH_RPC)/%.cc, $(PATH_OBJ)/%.o, $(wildcard $(PATH_RPC)/*.cc))
 
-ALL_TESTS : $(PATH_BIN)/test_log 
+ALL_TESTS : $(PATH_BIN)/test_log $(PATH_BIN)/test_eventloop
 # ALL_TESTS : $(PATH_BIN)/test_log $(PATH_BIN)/test_eventloop $(PATH_BIN)/test_tcp $(PATH_BIN)/test_client $(PATH_BIN)/test_rpc_client $(PATH_BIN)/test_rpc_server
 
 # TEST_CASE_OUT := $(PATH_BIN)/test_log $(PATH_BIN)/test_eventloop $(PATH_BIN)/test_tcp $(PATH_BIN)/test_client  $(PATH_BIN)/test_rpc_client $(PATH_BIN)/test_rpc_server
-TEST_CASE_OUT := $(PATH_BIN)/test_log  
+TEST_CASE_OUT := $(PATH_BIN)/test_log $(PATH_BIN)/test_eventloop 
 
 LIB_OUT := $(PATH_LIB)/librocket.a
 
 $(PATH_BIN)/test_log: $(LIB_OUT)
 	$(CXX) $(CXXFLAGS) $(PATH_TESTCASES)/test_log.cc -o $@ $(LIB_OUT) $(LIBS) -ldl -pthread
 
-# $(PATH_BIN)/test_eventloop: $(LIB_OUT)
-# 	$(CXX) $(CXXFLAGS) $(PATH_TESTCASES)/test_eventloop.cc -o $@ $(LIB_OUT) $(LIBS) -ldl -pthread
+$(PATH_BIN)/test_eventloop: $(LIB_OUT)
+	$(CXX) $(CXXFLAGS) $(PATH_TESTCASES)/test_eventloop.cc -o $@ $(LIB_OUT) $(LIBS) -ldl -pthread
 
 # $(PATH_BIN)/test_tcp: $(LIB_OUT)
 # 	$(CXX) $(CXXFLAGS) $(PATH_TESTCASES)/test_tcp.cc -o $@ $(LIB_OUT) $(LIBS) -ldl -pthread
