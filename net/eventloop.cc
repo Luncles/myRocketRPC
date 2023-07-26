@@ -78,6 +78,9 @@ namespace myRocket
     // 初始化唤醒fd事件
     InitWakeUpFdEvent();
 
+    // 初始化定时器
+    InitTimer();
+
     INFOLOG("success create event loop in thread %d\n", myThreadID);
     currentEventloop = this;
   }
@@ -89,6 +92,12 @@ namespace myRocket
     {
       delete myWakeUpFdEvent;
       myWakeUpFdEvent = nullptr;
+    }
+
+    if (myTimer != nullptr)
+    {
+      delete myTimer;
+      myTimer = nullptr;
     }
   }
 
@@ -111,6 +120,10 @@ namespace myRocket
           TaskCallBack();
         }
       }
+
+      // 这里添加定时器任务的逻辑
+      // 1、怎么判断一个定时任务需要执行？（需要有一个arrive_time）
+      // 2、当arrive_time到时，如何让处于阻塞的epoll_wait返回
 
       int timeout = globalEpollMaxTimeout;                 // epoll_wait超时时间
       struct epoll_event resultEvent[globalEpollMaxEvent]; // 保存epoll_wait返回的事件
@@ -267,5 +280,17 @@ namespace myRocket
 
     // 将唤醒事件添加到epoll监听表里
     AddEpollEvent(myWakeUpFdEvent);
+  }
+
+  void EventLoop::InitTimer()
+  {
+    myTimer = new Timer();
+    // 将定时器添加到epoll监听表里
+    AddEpollEvent(myTimer);
+  }
+
+  void EventLoop::AddTimerEvent(TimerEvent::myTimerEventPtr timerEvent)
+  {
+    myTimer->AddTimerEvent(timerEvent);
   }
 } // namespace myRocket

@@ -11,11 +11,15 @@
 
 #include <sys/types.h>
 #include <unistd.h>
+#include <sys/time.h>
 
 namespace myRocket
 {
     pid_t GetPid();
     pid_t GetThreadId();
+
+    // 获取当前时间
+    int64_t GetNowMS();
 } // namespace myRocketRPC
 
 #endif

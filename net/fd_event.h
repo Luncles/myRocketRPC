@@ -26,6 +26,8 @@ namespace myRocket
       ERROR_EVENT = EPOLLERR,
     };
 
+    FDEvent();
+
     FDEvent(int fd);
 
     ~FDEvent();

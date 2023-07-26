@@ -16,6 +16,7 @@
 #include "/home/luncles/myRocketRPC/common/log.h"
 #include "/home/luncles/myRocketRPC/net/eventloop.h"
 #include "/home/luncles/myRocketRPC/net/fd_event.h"
+#include "/home/luncles/myRocketRPC/net/timer.h"
 
 int main()
 {
@@ -63,6 +64,13 @@ int main()
 
     DEBUGLOG("success get client fd[%d], client address:[%s:%d]", clientfd, inet_ntoa(clientAddress.sin_addr), ntohs(clientAddress.sin_port)); });
   testEventLoop->AddEpollEvent(&fdEvent);
+
+  // 创建timerEvent
+  int timerNum = 0;
+  myRocket::TimerEvent::myTimerEventPtr timerEvent = std::make_shared<myRocket::TimerEvent>(
+      5000, true, [&timerNum]()
+      { INFOLOG("trigger timer event, count=[%d]", timerNum++); });
+  testEventLoop->AddTimerEvent(timerEvent);
 
   // 开始运行服务器
   testEventLoop->Loop();

@@ -17,6 +17,7 @@
 #include "/home/luncles/myRocketRPC/common/mutex.h"
 #include "fd_event.h"
 #include "wakeup_fd_event.h"
+#include "timer.h"
 
 namespace myRocket
 {
@@ -39,8 +40,8 @@ namespace myRocket
     // 终止服务器，一般不执行
     void Stop();
 
-    // 初始化唤醒fd事件:其实唤醒事件是为了唤醒epoll_wait的阻塞，当没有事件发生又需要唤醒epoll_wait时，就往wakeupFD里写一个字符，这样epoll_wait监听到读事件发生，就会返回了
-    void InitWakeUpFdEvent();
+    // 添加定时器事件
+    void AddTimerEvent(TimerEvent::myTimerEventPtr timerEvent);
 
     // 添加事件
     void AddEpollEvent(FDEvent *fdEvent);
@@ -54,10 +55,18 @@ namespace myRocket
     void AddTaskToQueue(std::function<void()> CallBack, bool isWakeUp = false /*=false*/);
 
   private:
+    // 初始化唤醒fd事件:其实唤醒事件是为了唤醒epoll_wait的阻塞，当没有事件发生又需要唤醒epoll_wait时，就往wakeupFD里写一个字符，这样epoll_wait监听到读事件发生，就会返回了
+    void InitWakeUpFdEvent();
+
+    // 初始化定时器
+    void InitTimer();
+
+  private:
     pid_t myThreadID{0};                             // 线程id
     int myEpollfd{0};                                // epoll句柄
     int myWakeupfd{0};                               // 用来唤醒IO的fd
     WakeUpFdEvent *myWakeUpFdEvent{nullptr};         // 唤醒fd对应的事件
+    Timer *myTimer{nullptr};                         // 定时器指针
     bool myStopFlag{false};                          // 关闭服务器的标志
     std::set<int> myListenfds;                       // 正在监听的fd集合
     std::queue<std::function<void()>> myPendingTask; // 待执行的任务队列

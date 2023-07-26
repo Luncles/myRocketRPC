@@ -31,4 +31,11 @@ namespace myRocket
         }
         return syscall(SYS_gettid); // 间接系统调用，获取真实的线程id唯一标识
     }
+
+    int64_t GetNowMS()
+    {
+        struct timeval val;
+        gettimeofday(&val, nullptr);
+        return val.tv_sec * 1000 + val.tv_usec / 1000;
+    }
 } // namespace myRocketRPC

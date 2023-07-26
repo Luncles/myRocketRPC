@@ -17,6 +17,12 @@
 
 namespace myRocket
 {
+  FDEvent::FDEvent()
+  {
+    // 这里要初始化一下myListenEvents，不然会得到一个很大的数
+    memset(&myListenEvents, 0, sizeof(myListenEvents));
+  }
+
   FDEvent::FDEvent(int fd) : myFD(fd)
   {
     // 这里要初始化一下myListenEvents，不然会得到一个很大的数
