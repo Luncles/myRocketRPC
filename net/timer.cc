@@ -204,7 +204,7 @@ namespace myRocket
     }
 
     // 保险起见，检查有没有遗漏的定时器任务
-    ResetTimerArriveTime();
+    // ResetTimerArriveTime();
 
     // 接下来执行超时任务的回调函数
     for (auto it : tmpTask)

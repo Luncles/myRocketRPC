@@ -26,6 +26,6 @@ namespace myRocket
   void TimerEvent::ResetArriveTime()
   {
     myArriveTime = GetNowMS() + myInterval;
-    DEBUGLOG("success create timer event, will excute at [%d]", myArriveTime);
+    DEBUGLOG("success create timer event, will excute at [%lld]", myArriveTime);
   }
 }
