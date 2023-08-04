@@ -293,4 +293,14 @@ namespace myRocket
   {
     myTimer->AddTimerEvent(timerEvent);
   }
+
+  EventLoop *EventLoop::GetCurrentEventLoop()
+  {
+    if (currentEventloop)
+    {
+      return currentEventloop;
+    }
+    currentEventloop = new EventLoop();
+    return currentEventloop;
+  }
 } // namespace myRocket

@@ -24,6 +24,9 @@ namespace myRocket
   class EventLoop
   {
   public:
+    static EventLoop *GetCurrentEventLoop();
+
+  public:
     EventLoop();
 
     ~EventLoop();

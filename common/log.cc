@@ -54,7 +54,7 @@ namespace myRocket
             std::string msg = tmp.front();
             tmp.pop();
 
-            printf(msg.c_str());
+            puts(msg.c_str());
         }
     }
 
