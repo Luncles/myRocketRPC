@@ -131,9 +131,9 @@ namespace myRocket
   // 移动读指针
   int TCPBuffer::MoveReadIndex(size_t size)
   {
-    if (size >= ReadRemain())
+    if (size > ReadRemain())
     {
-      ERRORLOG("Move read index error, invalid size [%d], old read index [%d], buffer size [%d]", size, myReadIndex, mySize);
+      ERRORLOG("Move read index error, invalid size [%d], old read index [%d], buffer size [%d], readRemain [%d]", size, myReadIndex, mySize, ReadRemain());
       return -1;
     }
     myReadIndex = myReadIndex + size;

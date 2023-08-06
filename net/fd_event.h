@@ -32,8 +32,14 @@ namespace myRocket
 
     ~FDEvent();
 
+    // 将fd设置为非阻塞
+    int SetNonBlock(int fd);
+
     // 添加监听事件
     void Listen(FdTriggerEvent eventType, std::function<void()> CallBack);
+
+    // 取消监听事件
+    void CancelEvent(FdTriggerEvent eventType);
 
     // 获取事件类型对应的回调函数
     std::function<void()> Handler(FdTriggerEvent eventType);

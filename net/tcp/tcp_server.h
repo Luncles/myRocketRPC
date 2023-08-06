@@ -13,11 +13,13 @@
 #include <unistd.h>
 #include <arpa/inet.h>
 #include <sys/socket.h>
+#include <set>
 #include "tcp_accept.h"
 #include "net_addr.h"
 #include "/home/luncles/myRocketRPC/net/eventloop.h"
 #include "/home/luncles/myRocketRPC/net/io_thread_group.h"
 #include "/home/luncles/myRocketRPC/net/fd_event.h"
+#include "tcp_connection.h"
 
 namespace myRocket
 {
@@ -50,6 +52,8 @@ namespace myRocket
     IOThreadGroup *myIOThreadGroup{nullptr}; // io线程组，每个io线程有各自的eventloop，相当于subreactor
 
     FDEvent *myListenFDEvent{nullptr}; // 方便在主线程中获取监听fd
+
+    std::set<TcpConnection::myTcpConnectionPtr> myClientConnection; // 客户端连接集合
 
     int myClientCount{0}; // 记录连接的客户端数
   };

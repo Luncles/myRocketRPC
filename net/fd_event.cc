@@ -14,6 +14,7 @@
 #include <string.h>
 #include <sys/socket.h>
 #include <unistd.h>
+#include <fcntl.h>
 
 namespace myRocket
 {
@@ -66,6 +67,31 @@ namespace myRocket
       myWriteCallBack = CallBack;
     }
     myListenEvents.data.ptr = this;
+  }
+
+  // 取消监听事件
+  void FDEvent::CancelEvent(FdTriggerEvent eventType)
+  {
+    if (eventType == FdTriggerEvent::IN_EVENT)
+    {
+      myListenEvents.events &= (~EPOLLIN);
+    }
+    else
+    {
+      myListenEvents.events &= (~EPOLLOUT);
+    }
+  }
+
+  int FDEvent::SetNonBlock(int fd)
+  {
+    // 获取文件描述符旧的状态标志
+    int oldOption = fcntl(fd, F_GETFL);
+    // 设置非阻塞标志
+    int newOption = oldOption | O_NONBLOCK;
+    // 设置非阻塞
+    fcntl(fd, newOption);
+    // 返回文件描述符旧的状态标志，以便日后恢复该状态标志
+    return oldOption;
   }
 
 } // namespace myRocket

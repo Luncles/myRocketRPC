@@ -15,6 +15,7 @@
 #include <memory>
 #include "/home/luncles/myRocketRPC/common/log.h"
 #include "tcp_server.h"
+#include "tcp_connection.h"
 
 namespace myRocket
 {
@@ -81,6 +82,12 @@ namespace myRocket
     // 更新连接客户端数
     myClientCount++;
 
+    // 把clientfd加到任意的io线程里执行业务逻辑
+    // 先分配一个io线程
+    IOThread *ioThread = myIOThreadGroup->GetIOThread();
+    TcpConnection::myTcpConnectionPtr connection = std::make_shared<TcpConnection>(ioThread->GetEventLoop(), clientfd, 128, myLocalAddress, clientAddress);
+    connection->SetState(Connected);
+    myClientConnection.insert(connection);
     INFOLOG("TCP server success get client, client fd[%d]", clientfd);
   }
 

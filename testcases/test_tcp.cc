@@ -28,8 +28,7 @@ void test_tcp_server()
 
 int main()
 {
-  myRocket::Config::SetGlobalConfig(
-      "/home/luncles/myRocketRPC/conf/myRocket.xml");
+  myRocket::Config::SetGlobalConfig("/home/luncles/myRocketRPC/conf/myRocket.xml");
   myRocket::Logger::InitGlobalLogger(1);
 
   // myRocket::IPNetAddr addr("127.0.0.1", 12366);

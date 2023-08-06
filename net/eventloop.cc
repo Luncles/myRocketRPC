@@ -276,7 +276,7 @@ namespace myRocket
       while (read(myWakeupfd, buf, 8) != -1 && errno != EAGAIN) {
 
       }
-      DEBUGLOG("real full bytes from wake up fd[%d]", myWakeupfd); });
+      DEBUGLOG("read full bytes from wake up fd[%d]", myWakeupfd); });
 
     // 将唤醒事件添加到epoll监听表里
     AddEpollEvent(myWakeUpFdEvent);
