@@ -20,6 +20,7 @@
 #include "/home/luncles/myRocketRPC/net/io_thread.h"
 #include "/home/luncles/myRocketRPC/net/io_thread_group.h"
 #include "../net/tcp/tcp_connection.h"
+#include "../net/tcp/tcp_client.h"
 
 void test_connect()
 {
@@ -58,11 +59,21 @@ void test_connect()
   DEBUGLOG("success read [%d] bytes from server, fd=[%d], msg=[%s]", ret, fd, msg.c_str());
 }
 
+void test_connect_client()
+{
+  myRocket::IPNetAddr::myNetAddrPtr addrPtr = std::make_shared<myRocket::IPNetAddr>("127.0.0.1", 12355);
+  DEBUGLOG("create address [%s]", addrPtr->ToString().c_str());
+  myRocket::TcpClient tcpClient(addrPtr);
+  tcpClient.ConnectServer([addrPtr]()
+                          { DEBUGLOG("success connect to [%s]", addrPtr->ToString().c_str()); });
+}
+
 int main()
 {
   myRocket::Config::SetGlobalConfig("/home/luncles/myRocketRPC/conf/myRocket.xml");
   myRocket::Logger::InitGlobalLogger(1);
 
-  test_connect();
+  // test_connect();
+  test_connect_client();
   return 0;
 }

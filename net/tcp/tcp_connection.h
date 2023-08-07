@@ -31,13 +31,22 @@ namespace myRocket
     HalfClosing = 3,
     Closed = 4,
   };
+
+  // TcpConnection即可以被服务端调用，也可以被客户端调用，代表了一个连接
+  enum TcpConnectionType
+  {
+    // 调用tcp connection的主体
+    TcpConnectionByServer = 1, // 服务端调用，代表跟对端客户端的连接
+    TcpConnectionByClient = 2, // 客户端调用，代表跟对端服务端的连接
+  };
+
   class TcpConnection
   {
   public:
     using myTcpConnectionPtr = std::shared_ptr<TcpConnection>;
 
   public:
-    TcpConnection(EventLoop *eventloop, int fd, int bufferSize, IPNetAddr::myNetAddrPtr serverAddr, IPNetAddr::myNetAddrPtr clientAddr);
+    TcpConnection(EventLoop *eventloop, int fd, int bufferSize, IPNetAddr::myNetAddrPtr serverAddr, IPNetAddr::myNetAddrPtr clientAddr, TcpConnectionType type = TcpConnectionByServer);
 
     ~TcpConnection();
 
@@ -71,6 +80,9 @@ namespace myRocket
     // 客户端关闭后清理现场
     void ClearConnection();
 
+    // 设置连接的类型
+    void SetConnectionType(TcpConnectionType type);
+
   private:
     // 代表持有当前连接的io线程
     EventLoop *myEventLoop{nullptr};
@@ -90,6 +102,8 @@ namespace myRocket
     FDEvent *myFDEvent{nullptr};
 
     TcpState myState;
+
+    TcpConnectionType myConnectionType{TcpConnectionByServer};
 
     int myFD{0};
   };

@@ -18,7 +18,7 @@
 
 namespace myRocket
 {
-  TcpConnection::TcpConnection(EventLoop *eventloop, int fd, int bufferSize, IPNetAddr::myNetAddrPtr serverAddr, IPNetAddr::myNetAddrPtr clientAddr) : myEventLoop(eventloop), myFD(fd), myServerAddr(serverAddr), myClientAddr(clientAddr), myState(NotConnected)
+  TcpConnection::TcpConnection(EventLoop *eventloop, int fd, int bufferSize, IPNetAddr::myNetAddrPtr serverAddr, IPNetAddr::myNetAddrPtr clientAddr, TcpConnectionType type) : myEventLoop(eventloop), myFD(fd), myServerAddr(serverAddr), myClientAddr(clientAddr), myState(NotConnected), myConnectionType(type)
   {
     myRecvBuffer = std::make_shared<TCPBuffer>(bufferSize);
     mySendBuffer = std::make_shared<TCPBuffer>(bufferSize);
@@ -268,5 +268,11 @@ namespace myRocket
   IPNetAddr::myNetAddrPtr TcpConnection::GetClientAddr()
   {
     return myClientAddr;
+  }
+
+  // 设置连接的类型
+  void TcpConnection::SetConnectionType(TcpConnectionType type)
+  {
+    myConnectionType = type;
   }
 }

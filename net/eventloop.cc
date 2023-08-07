@@ -103,6 +103,7 @@ namespace myRocket
 
   void EventLoop::Loop()
   {
+    myIsLooping = true;
     while (!myStopFlag)
     {
       // 加锁，尽量减少锁的粒度
@@ -302,5 +303,10 @@ namespace myRocket
     }
     currentEventloop = new EventLoop();
     return currentEventloop;
+  }
+
+  bool EventLoop::isLooping()
+  {
+    return myIsLooping;
   }
 } // namespace myRocket

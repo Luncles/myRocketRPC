@@ -57,6 +57,9 @@ namespace myRocket
     // 将跨线程调用的添加事件回调函数添加到任务队列中
     void AddTaskToQueue(std::function<void()> CallBack, bool isWakeUp = false /*=false*/);
 
+    // 判断是不是开启了loop循环
+    bool isLooping();
+
   private:
     // 初始化唤醒fd事件:其实唤醒事件是为了唤醒epoll_wait的阻塞，当没有事件发生又需要唤醒epoll_wait时，就往wakeupFD里写一个字符，这样epoll_wait监听到读事件发生，就会返回了
     void InitWakeUpFdEvent();
@@ -74,6 +77,7 @@ namespace myRocket
     std::set<int> myListenfds;                       // 正在监听的fd集合
     std::queue<std::function<void()>> myPendingTask; // 待执行的任务队列
     pMutex myMutex;                                  // 任务队列的互斥锁
+    bool myIsLooping{false};                         // 处于loop循环的标志位
   };
 } // namespace myRocket
 
