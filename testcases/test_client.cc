@@ -12,6 +12,7 @@
 #include <unistd.h>
 #include <arpa/inet.h>
 #include <sys/socket.h>
+#include <memory>
 #include "/home/luncles/myRocketRPC/common/config.h"
 #include "/home/luncles/myRocketRPC/common/log.h"
 #include "/home/luncles/myRocketRPC/net/eventloop.h"
@@ -21,6 +22,7 @@
 #include "/home/luncles/myRocketRPC/net/io_thread_group.h"
 #include "../net/tcp/tcp_connection.h"
 #include "../net/tcp/tcp_client.h"
+#include "../net/coder/string_coder.h"
 
 void test_connect()
 {
@@ -68,12 +70,32 @@ void test_connect_client()
                           { DEBUGLOG("success connect to [%s]", addrPtr->ToString().c_str()); });
 }
 
+void test_tcp_client()
+{
+  myRocket::IPNetAddr::myNetAddrPtr addrPtr = std::make_shared<myRocket::IPNetAddr>("127.0.0.1", 12355);
+  DEBUGLOG("create address [%s]", addrPtr->ToString().c_str());
+  myRocket::TcpClient tcpClient(addrPtr);
+  tcpClient.ConnectServer([addrPtr, &tcpClient]()
+                          { DEBUGLOG("success connect to [%s]", addrPtr->ToString().c_str());
+
+  std::shared_ptr<myRocket::StringProtocol> message = std::make_shared<myRocket::StringProtocol>();
+  message->myMessageID = "123456789";
+  message->info = "hello, myRocket";
+  tcpClient.WriteMessage(message, [](myRocket::AbstractProtocol::myAbstractProtocolPtr msgPtr)
+                         { DEBUGLOG("send message success"); });
+                         
+  tcpClient.ReadMessage(message->myMessageID, [](myRocket::AbstractProtocol::myAbstractProtocolPtr msgPtr) {
+    std::shared_ptr<myRocket::StringProtocol> message = std::dynamic_pointer_cast<myRocket::StringProtocol>(msgPtr);
+    DEBUGLOG("messageID[%s], get response [%s]", message->myMessageID.c_str(), message->info.c_str());
+  }); });
+}
 int main()
 {
   myRocket::Config::SetGlobalConfig("/home/luncles/myRocketRPC/conf/myRocket.xml");
   myRocket::Logger::InitGlobalLogger(1);
 
   // test_connect();
-  test_connect_client();
+  // test_connect_client();
+  test_tcp_client();
   return 0;
 }

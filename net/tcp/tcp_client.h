@@ -41,7 +41,7 @@ namespace myRocket
 
     // 异步地接收数据
     // 借助epoll，如果接收成功，会触发回调函数 void ReadCallBack(AbstractProtocol::myAbstractProtocolPtr message)
-    void ReadMessage(AbstractProtocol::myAbstractProtocolPtr message, std::function<void(AbstractProtocol::myAbstractProtocolPtr)> ReadCallBack);
+    void ReadMessage(const std::string &message, std::function<void(AbstractProtocol::myAbstractProtocolPtr)> ReadCallBack);
 
     // 关闭客户端的eventloop
     void Stop();

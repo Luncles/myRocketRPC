@@ -15,11 +15,15 @@
 #include <arpa/inet.h>
 #include <sys/socket.h>
 #include <memory>
+#include <map>
+#include <utility>
 #include "../eventloop.h"
 #include "../io_thread.h"
 #include "../fd_event.h"
 #include "net_addr.h"
 #include "tcp_buffer.h"
+#include "../coder/abstract_protocol.h"
+#include "../coder/abstract_coder.h"
 
 namespace myRocket
 {
@@ -83,6 +87,18 @@ namespace myRocket
     // 设置连接的类型
     void SetConnectionType(TcpConnectionType type);
 
+    // 启动监听可写事件
+    void ListenWrite();
+
+    // 启动监听可读事件
+    void ListenRead();
+
+    // 将发送对象和回调函数写入发送集合中
+    void PushSendMessage(AbstractProtocol::myAbstractProtocolPtr sendMessage, std::function<void(AbstractProtocol::myAbstractProtocolPtr)> SendCallBack);
+
+    // 将接收对象和回调函数写入接收集合中
+    void PushRecvMessage(const std::string &RecvMessageID, std::function<void(AbstractProtocol::myAbstractProtocolPtr)> recvCallBack);
+
   private:
     // 代表持有当前连接的io线程
     EventLoop *myEventLoop{nullptr};
@@ -106,6 +122,15 @@ namespace myRocket
     TcpConnectionType myConnectionType{TcpConnectionByServer};
 
     int myFD{0};
+
+    // 发送回调函数集合
+    std::vector<std::pair<AbstractProtocol::myAbstractProtocolPtr, std::function<void(AbstractProtocol::myAbstractProtocolPtr)>>> mySendCbCollection;
+
+    // 接收回调函数集合
+    std::map<std::string, std::function<void(AbstractProtocol::myAbstractProtocolPtr)>> myRecvCbCollection;
+
+    // 编解码基类，相当于发送器和接收器，将数据搬运到发送/接收缓冲区
+    AbstractCoder *myAbstractCoder{nullptr};
   };
 }
 #endif

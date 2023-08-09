@@ -15,6 +15,7 @@
 #include "tcp_connection.h"
 #include "../../common/log.h"
 #include "../fd_event_group.h"
+#include "../coder/string_coder.h"
 
 namespace myRocket
 {
@@ -27,8 +28,14 @@ namespace myRocket
 
     myFDEvent->SetNonBlock(myFD);
 
-    myFDEvent->Listen(FDEvent::IN_EVENT, std::bind(&TcpConnection::OnRead, this));
-    myEventLoop->AddEpollEvent(myFDEvent);
+    myAbstractCoder = new StringCoder();
+
+    // 如果是服务器的tcpConnection，则要监听可读事件
+    if (myConnectionType == TcpConnectionByServer)
+    {
+      ListenRead();
+    }
+    // ListenRead();
   }
 
   TcpConnection::~TcpConnection()
@@ -43,6 +50,11 @@ namespace myRocket
     {
       delete myFDEvent;
       myFDEvent = nullptr;
+    }
+    if (myAbstractCoder != nullptr)
+    {
+      delete myAbstractCoder;
+      myAbstractCoder = nullptr;
     }
   }
 
@@ -130,26 +142,46 @@ namespace myRocket
   // 执行回调函数
   void TcpConnection::OnExcute()
   {
-    // 从客户端获取RPC请求，执行业务逻辑，获取RPC响应，再把响应发送到客户端
-    // 这里先写一个echo做示例
-    std::vector<char> tmp;
-    int size = myRecvBuffer->ReadRemain();
-    tmp.resize(size);
-    myRecvBuffer->ReadFromBuffer(tmp, size);
-
-    std::string msg;
-    for (size_t i = 0; i < size; i++)
+    if (myConnectionType == TcpConnectionByServer)
     {
-      msg += tmp[i];
+      // 从客户端获取RPC请求，执行业务逻辑，获取RPC响应，再把响应发送到客户端
+      // 这里先写一个echo做示例
+      std::vector<char> tmp;
+      int size = myRecvBuffer->ReadRemain();
+      tmp.resize(size);
+      myRecvBuffer->ReadFromBuffer(tmp, size);
+
+      std::string msg;
+      for (size_t i = 0; i < size; i++)
+      {
+        msg += tmp[i];
+      }
+
+      INFOLOG("success get request[%s] from client[%s]", msg.c_str(), myClientAddr->ToString().c_str());
+
+      mySendBuffer->WriteToBuffer(msg.c_str(), msg.length());
+
+      // 启动监听可写事件
+      ListenWrite();
     }
+    else
+    {
+      // 从buffer中decode到抽象协议对象，执行回调函数
+      std::vector<AbstractProtocol::myAbstractProtocolPtr> results;
+      myAbstractCoder->Decode(results, myRecvBuffer);
 
-    INFOLOG("success get request[%s] from client[%s]", msg.c_str(), myClientAddr->ToString().c_str());
-
-    mySendBuffer->WriteToBuffer(msg.c_str(), msg.length());
-
-    // 将消息发送到客户端
-    myFDEvent->Listen(FDEvent::OUT_EVENT, std::bind(&TcpConnection::OnWrite, this));
-    myEventLoop->AddEpollEvent(myFDEvent);
+      for (size_t i = 0; i < results.size(); i++)
+      {
+        std::string messageID = results[i]->myMessageID;
+        auto it = myRecvCbCollection.find(messageID);
+        if (it != myRecvCbCollection.end())
+        {
+          // 执行回调函数
+          it->second(results[i]);
+          myRecvCbCollection.erase(it);
+        }
+      }
+    }
   }
 
   // 写发送缓冲区回调函数
@@ -160,6 +192,18 @@ namespace myRocket
     {
       ERRORLOG("OnWrite error! client has already disconnected, addr=[%s]", myClientAddr->ToString().c_str());
       return;
+    }
+
+    // 如果是客户端的tcpConnection，则要将所有的抽象协议对象编码成字节流进行发送
+    if (myConnectionType == TcpConnectionByClient)
+    {
+      std::vector<AbstractProtocol::myAbstractProtocolPtr> sendMessages;
+
+      for (size_t i = 0; i < mySendCbCollection.size(); i++)
+      {
+        sendMessages.push_back(mySendCbCollection[i].first);
+      }
+      myAbstractCoder->Encode(sendMessages, mySendBuffer);
     }
 
     // 写完标志
@@ -184,7 +228,7 @@ namespace myRocket
       if (ret >= writeMax)
       {
         // 要先移动读指针
-        mySendBuffer->MoveReadIndex(ret);
+        // mySendBuffer->MoveReadIndex(ret);
 
         DEBUGLOG("all the data has been sent to client [%s]", myClientAddr->ToString().c_str());
         isWriteAll = true;
@@ -203,6 +247,17 @@ namespace myRocket
     {
       myFDEvent->CancelEvent(FDEvent::OUT_EVENT);
       myEventLoop->AddEpollEvent(myFDEvent);
+    }
+
+    // 发送完毕之后，还要执行发送回调函数
+    if (myConnectionType == TcpConnectionByClient)
+    {
+      for (size_t i = 0; i < mySendCbCollection.size(); i++)
+      {
+        // 执行回调函数
+        mySendCbCollection[i].second(mySendCbCollection[i].first);
+      }
+      mySendCbCollection.clear();
     }
   }
 
@@ -274,5 +329,31 @@ namespace myRocket
   void TcpConnection::SetConnectionType(TcpConnectionType type)
   {
     myConnectionType = type;
+  }
+
+  // 启动监听可写事件
+  void TcpConnection::ListenWrite()
+  {
+    myFDEvent->Listen(FDEvent::OUT_EVENT, std::bind(&TcpConnection::OnWrite, this));
+    myEventLoop->AddEpollEvent(myFDEvent);
+  }
+
+  // 启动监听可读事件
+  void TcpConnection::ListenRead()
+  {
+    myFDEvent->Listen(FDEvent::IN_EVENT, std::bind(&TcpConnection::OnRead, this));
+    myEventLoop->AddEpollEvent(myFDEvent);
+  }
+
+  // 将发送对象和回调函数写入发送集合中
+  void TcpConnection::PushSendMessage(AbstractProtocol::myAbstractProtocolPtr sendMessage, std::function<void(AbstractProtocol::myAbstractProtocolPtr)> SendCallBack)
+  {
+    mySendCbCollection.push_back(std::make_pair(sendMessage, SendCallBack));
+  }
+
+  // 将接收对象和回调函数写入接收集合中
+  void TcpConnection::PushRecvMessage(const std::string &recvMessageID, std::function<void(AbstractProtocol::myAbstractProtocolPtr)> RecvCallBack)
+  {
+    myRecvCbCollection.insert(std::make_pair(recvMessageID, RecvCallBack));
   }
 }

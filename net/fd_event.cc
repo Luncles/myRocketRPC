@@ -89,7 +89,7 @@ namespace myRocket
     // 设置非阻塞标志
     int newOption = oldOption | O_NONBLOCK;
     // 设置非阻塞
-    fcntl(fd, newOption);
+    fcntl(fd, F_SETFL, newOption);
     // 返回文件描述符旧的状态标志，以便日后恢复该状态标志
     return oldOption;
   }

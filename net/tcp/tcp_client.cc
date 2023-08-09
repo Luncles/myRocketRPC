@@ -39,7 +39,8 @@ namespace myRocket
     myFDEvent->SetNonBlock(myFD);
 
     // 创建tcp connection
-    myTcpConnection = std::make_shared<TcpConnection>(myEventLoop, myFD, 128, myServerAddr, nullptr, TcpConnectionByClient);
+    myTcpConnection = std::make_shared<TcpConnection>(myEventLoop, myFD, 128, nullptr, myServerAddr, TcpConnectionByClient);
+    myTcpConnection->SetConnectionType(TcpConnectionByClient);
   }
 
   TcpClient::~TcpClient()
@@ -83,10 +84,10 @@ namespace myRocket
         ConnectCallBack();
       }
       // 还要判断eventloop是不是打开了
-      if (!myEventLoop->isLooping())
-      {
-        myEventLoop->Loop();
-      }
+      // if (!myEventLoop->isLooping())
+      // {
+      //   myEventLoop->Loop();
+      // }
     }
     else if (ret == -1)
     {
@@ -101,19 +102,24 @@ namespace myRocket
             ERRORLOG("get socket option failed, fd=[%d], server address=[%s]", myFD, myServerAddr->ToString().c_str());
             return;
           }
+          bool isConnectSuccess = false;
           if (error == 0) {
             DEBUGLOG("connect [%s] success, ret=[%d]", myServerAddr->ToString().c_str(), ret);
             myTcpConnection->SetState(Connected);
-            if (ConnectCallBack) {
-              ConnectCallBack();
-            }
+            isConnectSuccess = true;
+            
           }
           else {
             ERRORLOG("connect error! errno=[%d], error=[%s]", errno, strerror(errno));
           }
           // 可写事件触发后要去掉可写事件的监听，不然会一直触发
           myFDEvent->CancelEvent(FDEvent::OUT_EVENT);
-          myEventLoop->AddEpollEvent(myFDEvent); });
+          myEventLoop->AddEpollEvent(myFDEvent); 
+
+          // 连接成功了才执行回调函数
+          if (isConnectSuccess && ConnectCallBack) {
+              ConnectCallBack();
+          } });
 
         myEventLoop->AddEpollEvent(myFDEvent);
         // 还要判断eventloop是不是打开了
@@ -133,12 +139,20 @@ namespace myRocket
   // 借助epoll，如果发送成功，会触发回调函数 void WriteCallBack(AbstractProtocol::myAbstractProtocolPtr message)
   void TcpClient::WriteMessage(AbstractProtocol::myAbstractProtocolPtr message, std::function<void(AbstractProtocol::myAbstractProtocolPtr)> WriteCallBack)
   {
+    // 1、将message对象和回调函数写入到connection的sendbuffer中
+    // 2、启动监听可写事件
+    myTcpConnection->PushSendMessage(message, WriteCallBack);
+    myTcpConnection->ListenWrite();
   }
 
   // 异步地接收数据
   // 借助epoll，如果接收成功，会触发回调函数 void ReadCallBack(AbstractProtocol::myAbstractProtocolPtr message)
-  void TcpClient::ReadMessage(AbstractProtocol::myAbstractProtocolPtr message, std::function<void(AbstractProtocol::myAbstractProtocolPtr)> ReadCallBack)
+  void TcpClient::ReadMessage(const std::string &message, std::function<void(AbstractProtocol::myAbstractProtocolPtr)> ReadCallBack)
   {
+    // 1、将message对象和回调函数写入到connection的recvbuffer中
+    // 2、启动监听可读事件
+    myTcpConnection->PushRecvMessage(message, ReadCallBack);
+    myTcpConnection->ListenRead();
   }
 
   // 关闭客户端的eventloop

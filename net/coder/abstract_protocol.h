@@ -23,7 +23,10 @@ namespace myRocket
   public:
     using myAbstractProtocolPtr = std::shared_ptr<AbstractProtocol>;
 
-  private:
+    virtual ~AbstractProtocol() {}
+
+  public:
+    std::string myMessageID; // 请求号，唯一标识一个请求/响应
   };
 }
 

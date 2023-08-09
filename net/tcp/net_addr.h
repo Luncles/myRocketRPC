@@ -36,6 +36,8 @@ namespace myRocket
     // 校验是否是有效地址
     virtual bool CheckAddrValid() = 0;
 
+    virtual ~NetAddr() {}
+
   private:
   };
 

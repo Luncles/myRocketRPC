@@ -80,7 +80,10 @@ namespace myRocket
     int readAble = ReadRemain() > size ? size : ReadRemain();
 
     // 拷贝数据
-    memcpy(&dest[0], &myBuffer[myReadIndex], readAble);
+    std::vector<char> tmp(readAble);
+    memcpy(&tmp[0], &myBuffer[myReadIndex], readAble);
+
+    dest.swap(tmp);
     myReadIndex += readAble;
 
     // 看情况调整缓冲区
