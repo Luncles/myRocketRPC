@@ -18,7 +18,7 @@
 
 namespace myRocket
 {
-  class AbstractCoder
+  struct AbstractCoder
   {
   public:
     // 将抽象协议对象转换为字节流，写入到sendbuffer中

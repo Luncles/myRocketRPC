@@ -20,6 +20,9 @@ namespace myRocket
 
     // 获取当前时间
     int64_t GetNowMS();
+
+    // 将网络字节序转换为主机字节序
+    int32_t GetInt32FromNetByte(const char *buf);
 } // namespace myRocketRPC
 
 #endif

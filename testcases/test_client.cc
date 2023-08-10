@@ -23,6 +23,8 @@
 #include "../net/tcp/tcp_connection.h"
 #include "../net/tcp/tcp_client.h"
 #include "../net/coder/string_coder.h"
+#include "../net/coder/tinypb_coder.h"
+#include "../net/coder/tinypb_protocol.h"
 
 void test_connect()
 {
@@ -78,17 +80,29 @@ void test_tcp_client()
   tcpClient.ConnectServer([addrPtr, &tcpClient]()
                           { DEBUGLOG("success connect to [%s]", addrPtr->ToString().c_str());
 
-  std::shared_ptr<myRocket::StringProtocol> message = std::make_shared<myRocket::StringProtocol>();
+  // test stringProtocol
+  // std::shared_ptr<myRocket::StringProtocol> message = std::make_shared<myRocket::StringProtocol>();
+  // message->myMessageID = "123456789";
+  // message->info = "hello, myRocket";
+  
+  // test tinypb
+  std::shared_ptr<myRocket::TinyProtocol> message = std::make_shared<myRocket::TinyProtocol>();
   message->myMessageID = "123456789";
-  message->info = "hello, myRocket";
+  message->myPBData = "hello, myRocket";
+  DEBUGLOG("message id = [%s]", message->myMessageID.c_str());
+  DEBUGLOG("my pb data = [%s]", message->myPBData.c_str());
   tcpClient.WriteMessage(message, [](myRocket::AbstractProtocol::myAbstractProtocolPtr msgPtr)
                          { DEBUGLOG("send message success"); });
-                         
+
   tcpClient.ReadMessage(message->myMessageID, [](myRocket::AbstractProtocol::myAbstractProtocolPtr msgPtr) {
-    std::shared_ptr<myRocket::StringProtocol> message = std::dynamic_pointer_cast<myRocket::StringProtocol>(msgPtr);
-    DEBUGLOG("messageID[%s], get response [%s]", message->myMessageID.c_str(), message->info.c_str());
+    
+    // std::shared_ptr<myRocket::StringProtocol> message = std::dynamic_pointer_cast<myRocket::StringProtocol>(msgPtr);
+    // DEBUGLOG("messageID[%s], get response [%s]", message->myMessageID.c_str(), message->info.c_str());
+    std::shared_ptr<myRocket::TinyProtocol> message = std::dynamic_pointer_cast<myRocket::TinyProtocol>(msgPtr);
+    DEBUGLOG("messageID[%s], get response [%s]", message->myMessageID.c_str(), message->myPBData.c_str());
   }); });
 }
+
 int main()
 {
   myRocket::Config::SetGlobalConfig("/home/luncles/myRocketRPC/conf/myRocket.xml");

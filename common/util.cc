@@ -7,6 +7,8 @@
  ************************************************************************/
 
 #include <syscall.h>
+#include <string.h>
+#include <arpa/inet.h>
 #include "util.h"
 
 namespace myRocket
@@ -37,5 +39,12 @@ namespace myRocket
         struct timeval val;
         gettimeofday(&val, nullptr);
         return val.tv_sec * 1000 + val.tv_usec / 1000;
+    }
+
+    int32_t GetInt32FromNetByte(const char *buf)
+    {
+        int32_t ret;
+        memcpy(&ret, buf, sizeof(ret));
+        return htonl(ret);
     }
 } // namespace myRocketRPC

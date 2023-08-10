@@ -16,6 +16,7 @@
 #include "../../common/log.h"
 #include "../fd_event_group.h"
 #include "../coder/string_coder.h"
+#include "../coder/tinypb_coder.h"
 
 namespace myRocket
 {
@@ -28,7 +29,8 @@ namespace myRocket
 
     myFDEvent->SetNonBlock(myFD);
 
-    myAbstractCoder = new StringCoder();
+    // myAbstractCoder = new StringCoder();
+    myAbstractCoder = new TinyPBCoder();
 
     // 如果是服务器的tcpConnection，则要监听可读事件
     if (myConnectionType == TcpConnectionByServer)
@@ -146,6 +148,8 @@ namespace myRocket
     {
       // 从客户端获取RPC请求，执行业务逻辑，获取RPC响应，再把响应发送到客户端
       // 这里先写一个echo做示例
+
+      /* 这是StringCoder部分的
       std::vector<char> tmp;
       int size = myRecvBuffer->ReadRemain();
       tmp.resize(size);
@@ -160,6 +164,31 @@ namespace myRocket
       INFOLOG("success get request[%s] from client[%s]", msg.c_str(), myClientAddr->ToString().c_str());
 
       mySendBuffer->WriteToBuffer(msg.c_str(), msg.length());
+
+      // 启动监听可写事件
+      ListenWrite();
+      */
+
+      // 下面是tinypbCoder的
+      std::vector<AbstractProtocol::myAbstractProtocolPtr> result;
+      myAbstractCoder->Decode(result, myRecvBuffer);
+      for (size_t i = 0; i < result.size(); i++)
+      {
+        INFOLOG("success get request[%s] from client[%s]", result[i]->myMessageID.c_str(), myClientAddr->ToString().c_str());
+      }
+      // std::vector<char> tmp;
+      // int size = myRecvBuffer->ReadRemain();
+      // tmp.resize(size);
+      // myRecvBuffer->ReadFromBuffer(tmp, size);
+
+      // std::string msg;
+      // for (size_t i = 0; i < size; i++)
+      // {
+      //   msg += tmp[i];
+      // }
+
+      // mySendBuffer->WriteToBuffer(msg.c_str(), msg.length());
+      myAbstractCoder->Encode(result, mySendBuffer);
 
       // 启动监听可写事件
       ListenWrite();
