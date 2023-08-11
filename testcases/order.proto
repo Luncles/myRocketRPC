@@ -1,0 +1,22 @@
+syntax = "proto3";
+option cc_generic_services = true;
+
+// 对C++来说，编译器会为每个.proto文件生成一个.h文件和一个.cc文件，.proto文件中的每个消息都有一个对应的类
+// 订单请求结构体
+message makeOrderRequest {
+  int32 price = 1;
+  string goods = 2;
+}
+
+// 订单响应结构体
+message makeOrderResponse {
+  int32 returnCode = 1;
+  string returnInfo = 2;
+  string orderID = 3;
+}
+
+// 定义RPC服务接口
+service Order {
+  // 语法：rpc 方法名(参数) returns (返回值);
+  rpc makeOrder(makeOrderRequest) returns (makeOrderResponse);
+}

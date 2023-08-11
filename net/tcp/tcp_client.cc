@@ -142,6 +142,7 @@ namespace myRocket
     // 1、将message对象和回调函数写入到connection的sendbuffer中
     // 2、启动监听可写事件
     myTcpConnection->PushSendMessage(message, WriteCallBack);
+
     DEBUGLOG("message id=[%s]", message->myMessageID.c_str());
     myTcpConnection->ListenWrite();
   }

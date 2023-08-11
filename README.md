@@ -64,11 +64,9 @@
 >
 > voidResetTimerArriveTime();
 >
->
 > // 管理定时器容器：multimap，底层是红黑树，会根据触发时间对timer event进行排序
 >
->     std::multimap<int64_t, TimerEvent::myTimerEventPtr>myTimerEventMap;
-
+> std::multimap<int64_t, TimerEvent::myTimerEventPtr>myTimerEventMap;
 
 ### IO线程
 
@@ -77,3 +75,18 @@
 1. 创建一个新线程（pthread_create）
 2. 在新线程里面 创建一个 EventLoop，完成初始化
 3. 开启 loop
+
+
+### RPC服务端流程
+
+> 1、启动的时候注册OrderService对象。
+>
+> 2、从recvBuffer中读取数据，进行Decode后得到请求的TinyProtocol对象。然后从请求的TinyProtocol对象中得到methodName，从OrderService里根据service.methodName找到对应的方法func。
+>
+> 3、找到对应的request type以及response type
+>
+> 4、将请求体TinyProtocol里面的pbdata反序列化为request type对象，声明一个空的response type对象。
+>
+> 5、func(request, response)
+>
+> 6、将response对象序列化为pbdata，再塞入到TinyProtocol对象中，做Encode后放到sendBuffer中，就可以发送回包了。

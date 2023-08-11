@@ -17,6 +17,7 @@
 #include "../fd_event_group.h"
 #include "../coder/string_coder.h"
 #include "../coder/tinypb_coder.h"
+#include "../rpc/rpc_dispatcher.h"
 
 namespace myRocket
 {
@@ -89,6 +90,7 @@ namespace myRocket
       int writeIndex = myRecvBuffer->GetWriteIndex();
 
       int ret = read(myFD, &(myRecvBuffer->myBuffer[writeIndex]), readMax);
+      std::vector<char> tmpVector = myRecvBuffer->myBuffer;
 
       // 读取数据成功
       if (ret > 0)
@@ -171,10 +173,17 @@ namespace myRocket
 
       // 下面是tinypbCoder的
       std::vector<AbstractProtocol::myAbstractProtocolPtr> result;
+      std::vector<AbstractProtocol::myAbstractProtocolPtr> replyMessages;
+      std::vector<char> tmpVec = myRecvBuffer->myBuffer;
       myAbstractCoder->Decode(result, myRecvBuffer);
       for (size_t i = 0; i < result.size(); i++)
       {
         INFOLOG("success get request[%s] from client[%s]", result[i]->myMessageID.c_str(), myClientAddr->ToString().c_str());
+
+        // 每一个请求都会调用rpc方法，然后获得响应tinypb，将响应放到发送缓冲区里，再监听可写事件
+        std::shared_ptr<TinyProtocol> message = std::make_shared<TinyProtocol>();
+        RpcDispatcher::GetRpcDispatcher()->Dispatch(result[i], message, this);
+        replyMessages.emplace_back(message);
       }
       // std::vector<char> tmp;
       // int size = myRecvBuffer->ReadRemain();
@@ -188,7 +197,7 @@ namespace myRocket
       // }
 
       // mySendBuffer->WriteToBuffer(msg.c_str(), msg.length());
-      myAbstractCoder->Encode(result, mySendBuffer);
+      myAbstractCoder->Encode(replyMessages, mySendBuffer);
 
       // 启动监听可写事件
       ListenWrite();
@@ -233,6 +242,7 @@ namespace myRocket
         sendMessages.push_back(mySendCbCollection[i].first);
       }
       myAbstractCoder->Encode(sendMessages, mySendBuffer);
+      std::vector<char> testVec = mySendBuffer->myBuffer;
     }
 
     // 写完标志
@@ -251,6 +261,7 @@ namespace myRocket
 
       int readIndex = mySendBuffer->GetReadIndex();
 
+      std::vector<char> tmpWriteVec = mySendBuffer->myBuffer;
       int ret = write(myFD, &(mySendBuffer->myBuffer[readIndex]), writeMax);
 
       // 表示数据写入成功

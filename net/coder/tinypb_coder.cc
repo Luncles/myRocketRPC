@@ -24,7 +24,7 @@ namespace myRocket
   // 将tinypb抽象协议对象转化为字节流，写入到sendbuffer中
   void TinyPBCoder::Encode(std::vector<AbstractProtocol::myAbstractProtocolPtr> &sendMessage, TCPBuffer::myTCPBufferPtr sendBuffer)
   {
-    for (auto m : sendMessage)
+    for (auto &m : sendMessage)
     {
       // 先把基类智能指针转换为派生类智能指针
       std::shared_ptr<TinyProtocol> msg = std::dynamic_pointer_cast<TinyProtocol>(m);
@@ -34,6 +34,7 @@ namespace myRocket
       {
         sendBuffer->WriteToBuffer(buf, len);
       }
+      std::vector<char> tmpVector = sendBuffer->myBuffer;
       if (buf)
       {
         // 因为buf的空间是malloc出来的，所以要free掉
@@ -220,7 +221,7 @@ namespace myRocket
     if (!message->myMethodName.empty())
     {
       memcpy(tmp, &(message->myMethodName[0]), methodNameLen);
-      tmp += messageIDLen;
+      tmp += methodNameLen;
     }
 
     // 接下来处理错误码
