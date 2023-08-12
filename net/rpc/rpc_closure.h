@@ -22,7 +22,7 @@ namespace myRocket
   class RpcClosure : public google::protobuf::Closure
   {
   public:
-    RpcClosure()
+    RpcClosure(std::function<void()> cb) : myCallBack(cb)
     {
       INFOLOG("RpcClosure");
     }

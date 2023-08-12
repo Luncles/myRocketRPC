@@ -25,6 +25,9 @@
 #include "../net/coder/string_coder.h"
 #include "../net/coder/tinypb_coder.h"
 #include "../net/coder/tinypb_protocol.h"
+#include "../net/rpc/rpc_channel.h"
+#include "../net/rpc/rpc_controller.h"
+#include "../net/rpc/rpc_closure.h"
 #include "order.pb.h"
 
 void test_tcp_client()
@@ -82,6 +85,40 @@ void test_tcp_client()
   }); });
 }
 
+void test_rpc_channel()
+{
+  myRocket::IPNetAddr::myNetAddrPtr addrPtr = std::make_shared<myRocket::IPNetAddr>("127.0.0.1", 12355);
+  DEBUGLOG("create address [%s]", addrPtr->ToString().c_str());
+  std::shared_ptr<myRocket::RpcChannel> channel = std::make_shared<myRocket::RpcChannel>(addrPtr);
+
+  // request
+  std::shared_ptr<makeOrderRequest> request = std::make_shared<makeOrderRequest>();
+  request->set_price(100);
+  request->set_goods("apples");
+  // response
+  std::shared_ptr<makeOrderResponse> response = std::make_shared<makeOrderResponse>();
+
+  // controller
+  std::shared_ptr<myRocket::RpcController> rpcController = std::make_shared<myRocket::RpcController>();
+  // rpcController->SetMessageID("999999999");
+
+  // done
+  std::shared_ptr<myRocket::RpcClosure> closure = std::make_shared<myRocket::RpcClosure>([request, response, channel]() mutable
+                                                                                         {
+                                                                                           INFOLOG("call rpc success in callback, request[%s], response[%s]", request->ShortDebugString().c_str(), response->ShortDebugString().c_str());
+                                                                                           INFOLOG("now exit eventloop");
+                                                                                           channel->GetTcpClient()->Stop();
+                                                                                           channel.reset(); });
+
+  channel->Init(rpcController, request, response, closure);
+
+  // 客户端的存根，里面保存着在proto文件里定义的rpc方法
+  // 原型：Order_Stub(::PROTOBUF_NAMESPACE_ID::RpcChannel* channel);
+  Order_Stub stub(channel.get());
+  // 这里调用makeOrder其实就是调用了CallMethod方法，所以需要那四个参数
+  stub.makeOrder(rpcController.get(), request.get(), response.get(), closure.get());
+}
+
 int main()
 {
   myRocket::Config::SetGlobalConfig("/home/luncles/myRocketRPC/conf/myRocket.xml");
@@ -89,6 +126,7 @@ int main()
 
   // test_connect();
   // test_connect_client();
-  test_tcp_client();
+  // test_tcp_client();
+  test_rpc_channel();
   return 0;
 }

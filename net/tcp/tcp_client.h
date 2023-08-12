@@ -52,6 +52,15 @@ namespace myRocket
     // 获取服务器地址
     IPNetAddr::myNetAddrPtr GetServerAddress();
 
+    // 获取连接错误消息码
+    int GetConnectErrorCode();
+
+    // 获取连接错误消息
+    std::string GetConnectErrorInfo();
+
+    // 初始化本地地址
+    void InitLocalAddr();
+
   private:
     // 连接的本地地址
     IPNetAddr::myNetAddrPtr myLocalAddr;
@@ -68,6 +77,12 @@ namespace myRocket
 
     // tcp连接
     TcpConnection::myTcpConnectionPtr myTcpConnection;
+
+    // 连接错误消息码
+    int myConnectErrorCode{0};
+
+    // 连接错误信息
+    std::string myConnectErrorInfo;
   };
 
 }

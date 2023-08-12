@@ -54,7 +54,7 @@ namespace myRocket
   }
 
   // 设置事件类型与其回调函数，进行监听
-  void FDEvent::Listen(FdTriggerEvent event, std::function<void()> CallBack)
+  void FDEvent::Listen(FdTriggerEvent event, std::function<void()> CallBack, std::function<void()> errorCallBack)
   {
     if (event == IN_EVENT)
     {
@@ -65,6 +65,15 @@ namespace myRocket
     {
       myListenEvents.events |= EPOLLOUT;
       myWriteCallBack = CallBack;
+    }
+
+    if (myErrorCallBack == nullptr)
+    {
+      myErrorCallBack = errorCallBack;
+    }
+    else
+    {
+      myErrorCallBack = nullptr;
     }
     myListenEvents.data.ptr = this;
   }

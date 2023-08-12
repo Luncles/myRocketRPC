@@ -15,6 +15,7 @@
 #include "tcp_client.h"
 #include "../../common/log.h"
 #include "../fd_event_group.h"
+#include "../../common/error_code.h"
 
 namespace myRocket
 {
@@ -75,10 +76,13 @@ namespace myRocket
 
     // 连接成功，在非阻塞的socket中调用connect，连接没有立即建立时，会返回-1，如果errno=EINPROGRESS，可以调用epoll监听这个连接失败的socket上的可写事件
     // epoll返回后，再利用getsockopt来读取错误码并清除该socket上的错误。如果错误码是0，表示连接成功建立，否则连接失败。
+
+    // 第二种判断方法就是在可写事件返回后再去connect一次，如果返回的值(ret < 0 && errno == EISCONN) || (ret == 0)，那也是连接成功
     if (ret == 0)
     {
       DEBUGLOG("connect [%s] succes, ret=[%d]", myServerAddr->ToString().c_str(), ret);
       myTcpConnection->SetState(Connected);
+      InitLocalAddr();
       if (ConnectCallBack)
       {
         ConnectCallBack();
@@ -93,9 +97,11 @@ namespace myRocket
     {
       if (errno == EINPROGRESS)
       {
+        /*下面是原本的写法
         // 监听可写事件
         myFDEvent->Listen(FDEvent::OUT_EVENT, [this, ConnectCallBack, ret]()
-                          {
+        {
+
           int error = 0;
           socklen_t errorLen = sizeof(error);
           if (getsockopt(myFD, SOL_SOCKET, SO_ERROR, &error, &errorLen) < 0) {
@@ -107,18 +113,60 @@ namespace myRocket
             DEBUGLOG("connect [%s] success, ret=[%d]", myServerAddr->ToString().c_str(), ret);
             myTcpConnection->SetState(Connected);
             isConnectSuccess = true;
-            
+
           }
           else {
             ERRORLOG("connect error! errno=[%d], error=[%s]", errno, strerror(errno));
           }
           // 可写事件触发后要去掉可写事件的监听，不然会一直触发
           myFDEvent->CancelEvent(FDEvent::OUT_EVENT);
-          myEventLoop->AddEpollEvent(myFDEvent); 
+          myEventLoop->AddEpollEvent(myFDEvent);
 
           // 连接成功了才执行回调函数
           if (isConnectSuccess && ConnectCallBack) {
-              ConnectCallBack();
+              ConnectCallBack(); }
+
+          });  */
+
+        /* 下面是添加了连接消息码的写法，主要是通过消息码让rpc channel感知到连接的成功与否*/
+        // 监听可写事件
+        myFDEvent->Listen(FDEvent::OUT_EVENT, [this, ConnectCallBack]()
+                          {
+          int ret = connect(myFD, myServerAddr->GetSockAddr(), myServerAddr->GetSockAddrLen());
+
+          // 已经建立连接的socket的errno为EISCONN
+          if ((ret < 0 && errno == EISCONN) || (ret == 0)) {
+            DEBUGLOG("connect [%s] success", myServerAddr->ToString().c_str());
+            myTcpConnection->SetState(Connected);
+            InitLocalAddr();
+          }
+          else {
+            if (errno == ECONNREFUSED) {
+              myConnectErrorCode = ERROR_PEER_CLOSED;
+              myConnectErrorInfo = "connect refused, sys error = " + std::string(strerror(errno));
+            }
+            else {
+              myConnectErrorCode = ERROR_FAILED_CONNECT;
+              myConnectErrorInfo = "connect unknown error, sys error = " + std::string(strerror(errno));
+            }
+            ERRORLOG("connect error, errno = [%d], error = [%ds]", errno, strerror(errno));
+            close(myFD);
+
+            // 原来的套接字不好用，上面关闭掉了，现在再申请一个新的fd，之后才能进行下一次connect
+            myFD = socket(myServerAddr->GetFamily(), SOCK_STREAM, 0);
+          }
+
+          // 可写事件触发后要取消可写事件的监听，不然会一直触发
+          // myFDEvent->CancelEvent(FDEvent::OUT_EVENT);
+          // myEventLoop->AddEpollEvent(myFDEvent); 
+          
+          // 原作者这里直接删掉fdEvent，其实我感觉取消监听好像开销要小一点
+          myEventLoop->DeleteEpollEvent(myFDEvent);
+
+          DEBUGLOG("now begin to ConnectCallBack");
+          // 只要connect完成（不管成功与否），就会执行回调函数
+          if (ConnectCallBack) {
+              ConnectCallBack(); 
           } });
 
         myEventLoop->AddEpollEvent(myFDEvent);
@@ -131,6 +179,14 @@ namespace myRocket
       else
       {
         ERRORLOG("connect error! errno=[%d], error=[%s]", errno, strerror(errno));
+        myConnectErrorCode = ERROR_FAILED_CONNECT;
+        myConnectErrorInfo = "connect error, sys error = " + std::string(strerror(errno));
+
+        // 只要connect完成（不管成功与否），就会执行回调函数
+        if (ConnectCallBack)
+        {
+          ConnectCallBack();
+        }
       }
     }
   }
@@ -160,6 +216,10 @@ namespace myRocket
   // 关闭客户端的eventloop
   void TcpClient::Stop()
   {
+    if (myEventLoop->isLooping())
+    {
+      myEventLoop->Stop();
+    }
   }
 
   // 获取本地地址
@@ -172,5 +232,33 @@ namespace myRocket
   IPNetAddr::myNetAddrPtr TcpClient::GetServerAddress()
   {
     return myServerAddr;
+  }
+
+  // 获取连接错误消息码
+  int TcpClient::GetConnectErrorCode()
+  {
+    return myConnectErrorCode;
+  }
+
+  // 获取连接错误消息
+  std::string TcpClient::GetConnectErrorInfo()
+  {
+    return myConnectErrorInfo;
+  }
+
+  void TcpClient::InitLocalAddr()
+  {
+    struct sockaddr_in localAddr;
+    socklen_t sockLen = sizeof(localAddr);
+
+    // Getsockname()返回套接字sockfd被绑定到的当前地址，位于addr指向的缓冲区中,成功返回0
+    int ret = getsockname(myFD, reinterpret_cast<sockaddr *>(&localAddr), &sockLen);
+    if (ret != 0)
+    {
+      ERRORLOG("initLocalAddr error, getsockname error. errno = [%d], error = [%s]", errno, strerror(errno));
+      return;
+    }
+
+    myLocalAddr = std::make_shared<IPNetAddr>(localAddr);
   }
 }

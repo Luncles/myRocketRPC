@@ -36,7 +36,7 @@ namespace myRocket
     int SetNonBlock(int fd);
 
     // 添加监听事件
-    void Listen(FdTriggerEvent eventType, std::function<void()> CallBack);
+    void Listen(FdTriggerEvent eventType, std::function<void()> CallBack, std::function<void()> errorCallBack = nullptr);
 
     // 取消监听事件
     void CancelEvent(FdTriggerEvent eventType);
@@ -55,9 +55,9 @@ namespace myRocket
 
     struct epoll_event myListenEvents;
 
-    std::function<void()> myReadCallBack;
-    std::function<void()> myWriteCallBack;
-    std::function<void()> myErrorCallBack;
+    std::function<void()> myReadCallBack{nullptr};
+    std::function<void()> myWriteCallBack{nullptr};
+    std::function<void()> myErrorCallBack{nullptr};
   };
 } // namespace myRocket
 #endif

@@ -171,7 +171,7 @@ namespace myRocket
           if (triggerEvent.events & EPOLLERR)
           {
             DEBUGLOG("fd[%d] trigger EPOLLERR event", fdEvent->GetFD());
-            // 删除出错的fd
+            // 删除出错的fd，因为EPOLLERR和EPOLLHUP等事件在epoll上是默认监听的，如果只是取消不删除fd，实际上还是会触发
             DeleteEpollEvent(fdEvent);
             // 执行错误事件处理器
             if (fdEvent->Handler(FDEvent::ERROR_EVENT) != nullptr)
@@ -186,7 +186,13 @@ namespace myRocket
   }
 
   // 关闭服务器的运行
-  void EventLoop::Stop() { myStopFlag = true; }
+  void EventLoop::Stop()
+  {
+    myStopFlag = true;
+
+    // 立刻唤醒线程以结束运行
+    Wakeup();
+  }
 
   // 处理唤醒线程事件
   void EventLoop::DealWakeUp()
