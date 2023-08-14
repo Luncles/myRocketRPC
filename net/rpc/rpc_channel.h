@@ -22,6 +22,33 @@
 
 namespace myRocket
 {
+// 对RPC的一些基本操作进行封装
+#define NEWMESSAGE(type, var_name) \
+  std::shared_ptr<type> var_name = std::make_shared<type>();
+
+#define NEWRPCCONTROLLER(var_name) \
+  std::shared_ptr<myRocket::RpcController> var_name = std::make_shared<myRocket::RpcController>();
+
+#define NEWRPCCHANNEL(addr, var_name) \
+  std::shared_ptr<myRocket::RpcChannel> var_name = std::make_shared<myRocket::RpcChannel>(std::make_shared<myRocket::IPNetAddr>(addr));
+
+/*
+  // rpcController->SetTimeout(10000);
+  channel->Init(rpcController, request, response, closure);
+
+  // 客户端的存根，里面保存着在proto文件里定义的rpc方法
+  // 原型：Order_Stub(::PROTOBUF_NAMESPACE_ID::RpcChannel* channel);
+  Order_Stub stub(channel.get());
+  // 这里调用makeOrder其实就是调用了CallMethod方法，所以需要那四个参数
+  stub.makeOrder(rpcController.get(), request.get(), response.get(), closure.get());
+*/
+#define CALLRPC(addr, stub_name, method_name, controller, request, response, closure)                     \
+  {                                                                                                       \
+    NEWRPCCHANNEL(addr, channel);                                                                         \
+    channel->Init(controller, request, response, closure);                                                \
+    stub_name(channel.get()).method_name(controller.get(), request.get(), response.get(), closure.get()); \
+  }
+
   class RpcChannel : public google::protobuf::RpcChannel, public std::enable_shared_from_this<RpcChannel>
   {
   public:

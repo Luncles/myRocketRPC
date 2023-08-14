@@ -268,7 +268,7 @@ namespace myRocket
       if (ret >= writeMax)
       {
         // 要先移动读指针
-        // mySendBuffer->MoveReadIndex(ret);
+        mySendBuffer->MoveReadIndex(ret);
 
         DEBUGLOG("all the data has been sent to client [%s]", myClientAddr->ToString().c_str());
         isWriteAll = true;

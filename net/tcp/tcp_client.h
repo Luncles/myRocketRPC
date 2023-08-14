@@ -17,6 +17,7 @@
 #include "net_addr.h"
 #include "../eventloop.h"
 #include "../fd_event.h"
+#include "../timer_event.h"
 #include "tcp_connection.h"
 #include "../coder/abstract_protocol.h"
 
@@ -60,6 +61,9 @@ namespace myRocket
 
     // 初始化本地地址
     void InitLocalAddr();
+
+    // 添加定时器事件
+    void AddTimerEvent(TimerEvent::myTimerEventPtr timerEvent);
 
   private:
     // 连接的本地地址

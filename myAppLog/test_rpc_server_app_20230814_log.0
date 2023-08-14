@@ -1,0 +1,6 @@
+[DEBUG]	[23-08-14 20:59:05.693]	[128243 : 128246]	[43493475528280358129]	[makeOrder]	[/home/luncles/myRocketRPC/testcases/test_rpc_server.cc : 43]	start sleep 5s
+[DEBUG]	[23-08-14 20:59:10.694]	[128243 : 128246]	[43493475528280358129]	[makeOrder]	[/home/luncles/myRocketRPC/testcases/test_rpc_server.cc : 45]	end sleep 5s
+[DEBUG]	[23-08-14 20:59:10.694]	[128243 : 128246]	[43493475528280358129]	[makeOrder]	[/home/luncles/myRocketRPC/testcases/test_rpc_server.cc : 63]	call makeOrder method end
+[DEBUG]	[23-08-14 21:37:08.339]	[5366 : 5369]	[37729894139557949103]	[makeOrder]	[/home/luncles/myRocketRPC/testcases/test_rpc_server.cc : 43]	start sleep 5s
+[DEBUG]	[23-08-14 21:37:13.339]	[5366 : 5369]	[37729894139557949103]	[makeOrder]	[/home/luncles/myRocketRPC/testcases/test_rpc_server.cc : 45]	end sleep 5s
+[DEBUG]	[23-08-14 21:37:13.339]	[5366 : 5369]	[37729894139557949103]	[makeOrder]	[/home/luncles/myRocketRPC/testcases/test_rpc_server.cc : 63]	call makeOrder method end

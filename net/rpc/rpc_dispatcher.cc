@@ -19,6 +19,7 @@
 #include "../../common/log.h"
 #include "../../common/error_code.h"
 #include "rpc_controller.h"
+#include "../../common/run_time.h"
 
 namespace myRocket
 {
@@ -100,6 +101,9 @@ namespace myRocket
     rpcController->SetLocalAddress(connection->GetServerAddr());
     rpcController->SetPeerAddress(connection->GetClientAddr());
     rpcController->SetMessageID(requestProtocol->myMessageID);
+
+    RunTime::GetRunTime()->messageID = requestProtocol->myMessageID;
+    RunTime::GetRunTime()->methodName = methodName;
 
     service->CallMethod(method, rpcController, requestMessage, responseMessage, nullptr);
 

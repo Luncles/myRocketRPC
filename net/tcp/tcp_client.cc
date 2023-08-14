@@ -261,4 +261,10 @@ namespace myRocket
 
     myLocalAddr = std::make_shared<IPNetAddr>(localAddr);
   }
+
+  // 添加定时器事件
+  void TcpClient::AddTimerEvent(TimerEvent::myTimerEventPtr timerEvent)
+  {
+    myEventLoop->AddTimerEvent(timerEvent);
+  }
 }

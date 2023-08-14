@@ -34,6 +34,7 @@ namespace myRocket
     /*************************** 派生类自定义函数 ***********************************/
     void SetFinished(bool value);
 
+    // Rpc调用执行完毕
     bool Finished();
 
     int GetTimeout();

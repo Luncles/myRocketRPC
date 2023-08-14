@@ -89,27 +89,40 @@ void test_rpc_channel()
 {
   myRocket::IPNetAddr::myNetAddrPtr addrPtr = std::make_shared<myRocket::IPNetAddr>("127.0.0.1", 12355);
   DEBUGLOG("create address [%s]", addrPtr->ToString().c_str());
+
+  // NEWRPCCHANNEL("127.0.0.1:12355", channel);
   std::shared_ptr<myRocket::RpcChannel> channel = std::make_shared<myRocket::RpcChannel>(addrPtr);
 
   // request
   std::shared_ptr<makeOrderRequest> request = std::make_shared<makeOrderRequest>();
+  // NEWMESSAGE(makeOrderRequest, request);
   request->set_price(100);
   request->set_goods("apples");
   // response
+  // NEWMESSAGE(makeOrderResponse, response);
   std::shared_ptr<makeOrderResponse> response = std::make_shared<makeOrderResponse>();
 
   // controller
+  // NEWRPCCONTROLLER(rpcController);
   std::shared_ptr<myRocket::RpcController> rpcController = std::make_shared<myRocket::RpcController>();
   // rpcController->SetMessageID("999999999");
-
+  rpcController->SetTimeout(10000);
   // done
-  std::shared_ptr<myRocket::RpcClosure> closure = std::make_shared<myRocket::RpcClosure>([request, response, channel]() mutable
-                                                                                         {
-                                                                                           INFOLOG("call rpc success in callback, request[%s], response[%s]", request->ShortDebugString().c_str(), response->ShortDebugString().c_str());
-                                                                                           INFOLOG("now exit eventloop");
-                                                                                           channel->GetTcpClient()->Stop();
-                                                                                           channel.reset(); });
 
+  std::shared_ptr<myRocket::RpcClosure> closure = std::make_shared<myRocket::RpcClosure>([request, response, channel, rpcController]() mutable
+                                                                                         {
+    if (rpcController->GetErrorCode() == 0) {
+    INFOLOG("call rpc success in callback, request[%s], response[%s]", request->ShortDebugString().c_str(), response->ShortDebugString().c_str());
+    }
+    else {
+    INFOLOG("call rpc failed in callback, request[%s], errno=[%d], error=[%s]",
+    request->ShortDebugString().c_str(), rpcController->GetErrorCode(), rpcController->GetErrorInfo().c_str());
+    }
+    INFOLOG("now exit eventloop");
+    //channel->GetTcpClient()->Stop();
+    channel.reset(); });
+
+  // rpcController->SetTimeout(10000);
   channel->Init(rpcController, request, response, closure);
 
   // 客户端的存根，里面保存着在proto文件里定义的rpc方法
@@ -117,12 +130,13 @@ void test_rpc_channel()
   Order_Stub stub(channel.get());
   // 这里调用makeOrder其实就是调用了CallMethod方法，所以需要那四个参数
   stub.makeOrder(rpcController.get(), request.get(), response.get(), closure.get());
+  // CALLRPC("127.0.0.1:12355", Order_Stub, makeOrder, rpcController, request, response, closure);
 }
 
 int main()
 {
-  myRocket::Config::SetGlobalConfig("/home/luncles/myRocketRPC/conf/myRocket.xml");
-  myRocket::Logger::InitGlobalLogger(1);
+  myRocket::Config::SetGlobalConfig(nullptr);
+  myRocket::Logger::InitGlobalLogger(0);
 
   // test_connect();
   // test_connect_client();

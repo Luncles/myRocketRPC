@@ -1,0 +1,127 @@
+[DEBUG]	[23-08-14 20:59:05.693]	[128271 : 128271]	[/home/luncles/myRocketRPC/net/timer_event.cc : 29]	success create timer event, will excute at [1692017946193]
+[INFO]	[23-08-14 20:59:05.693]	[128271 : 128271]	[/home/luncles/myRocketRPC/net/eventloop.cc : 276]	wakeup fd = [4]
+[INFO]	[23-08-14 20:59:05.693]	[128271 : 128271]	[/home/luncles/myRocketRPC/net/eventloop.cc : 214]	epoll_event.events = 1
+[DEBUG]	[23-08-14 20:59:05.693]	[128271 : 128271]	[/home/luncles/myRocketRPC/net/eventloop.cc : 214]	add event success, fd[4]
+[DEBUG]	[23-08-14 20:59:05.693]	[128271 : 128271]	[/home/luncles/myRocketRPC/net/timer.cc : 34]	create timer fd = [5]
+[INFO]	[23-08-14 20:59:05.693]	[128271 : 128271]	[/home/luncles/myRocketRPC/net/eventloop.cc : 214]	epoll_event.events = 1
+[DEBUG]	[23-08-14 20:59:05.693]	[128271 : 128271]	[/home/luncles/myRocketRPC/net/eventloop.cc : 214]	add event success, fd[5]
+[INFO]	[23-08-14 20:59:05.693]	[128271 : 128271]	[/home/luncles/myRocketRPC/net/eventloop.cc : 84]	success create event loop in thread 128271
+
+[DEBUG]	[23-08-14 20:59:05.693]	[128271 : 128271]	[/home/luncles/myRocketRPC/net/timer.cc : 144]	timer reset to [1692017946193]
+[DEBUG]	[23-08-14 20:59:05.693]	[128271 : 128271]	[/home/luncles/myRocketRPC/testcases/test_rpc_client.cc : 91]	create address [127.0.0.1:12355]
+[INFO]	[23-08-14 20:59:05.693]	[128271 : 128271]	[/home/luncles/myRocketRPC/net/rpc/rpc_channel.cc : 27]	RpcChannel
+[INFO]	[23-08-14 20:59:05.693]	[128271 : 128271]	[/home/luncles/myRocketRPC/testcases/../net/rpc/rpc_controller.h : 28]	RpcController
+[INFO]	[23-08-14 20:59:05.693]	[128271 : 128271]	[/home/luncles/myRocketRPC/testcases/../net/rpc/rpc_closure.h : 27]	RpcClosure
+[DEBUG]	[23-08-14 20:59:05.693]	[128271 : 128271]	[/home/luncles/myRocketRPC/net/fd_event_group.cc : 57]	Now get a fdevent from fdevent group, fd=[6]
+[DEBUG]	[23-08-14 20:59:05.693]	[128271 : 128271]	[/home/luncles/myRocketRPC/net/fd_event_group.cc : 57]	Now get a fdevent from fdevent group, fd=[6]
+[INFO]	[23-08-14 20:59:05.693]	[128271 : 128271]	[/home/luncles/myRocketRPC/net/rpc/rpc_channel.cc : 77]	[43493475528280358129] | call method name [Order.makeOrder]
+[DEBUG]	[23-08-14 20:59:05.693]	[128271 : 128271]	[/home/luncles/myRocketRPC/net/timer_event.cc : 29]	success create timer event, will excute at [1692017955693]
+[INFO]	[23-08-14 20:59:05.693]	[128271 : 128271]	[/home/luncles/myRocketRPC/net/eventloop.cc : 214]	epoll_event.events = 4
+[DEBUG]	[23-08-14 20:59:05.693]	[128271 : 128271]	[/home/luncles/myRocketRPC/net/eventloop.cc : 214]	add event success, fd[6]
+[DEBUG]	[23-08-14 20:59:05.693]	[128271 : 128271]	[/home/luncles/myRocketRPC/net/eventloop.cc : 166]	fd[6] trigger EPOLLOUT event
+[DEBUG]	[23-08-14 20:59:05.693]	[128271 : 128271]	[/home/luncles/myRocketRPC/net/tcp/tcp_client.cc : 139]	connect [127.0.0.1:12355] success
+[DEBUG]	[23-08-14 20:59:05.693]	[128271 : 128271]	[/home/luncles/myRocketRPC/net/eventloop.cc : 234]	delete event success, fd[6]
+[DEBUG]	[23-08-14 20:59:05.693]	[128271 : 128271]	[/home/luncles/myRocketRPC/net/tcp/tcp_client.cc : 166]	now begin to ConnectCallBack
+[INFO]	[23-08-14 20:59:05.693]	[128271 : 128271]	[/home/luncles/myRocketRPC/net/rpc/rpc_channel.cc : 143]	[43493475528280358129] | connect success, peer address[127.0.0.1:12355], local address[127.0.0.1:32868]
+[DEBUG]	[23-08-14 20:59:05.693]	[128271 : 128271]	[/home/luncles/myRocketRPC/net/tcp/tcp_client.cc : 202]	message id=[43493475528280358129]
+[INFO]	[23-08-14 20:59:05.693]	[128271 : 128271]	[/home/luncles/myRocketRPC/net/eventloop.cc : 214]	epoll_event.events = 4
+[DEBUG]	[23-08-14 20:59:05.693]	[128271 : 128271]	[/home/luncles/myRocketRPC/net/eventloop.cc : 214]	add event success, fd[6]
+[DEBUG]	[23-08-14 20:59:05.693]	[128271 : 128271]	[/home/luncles/myRocketRPC/net/eventloop.cc : 166]	fd[6] trigger EPOLLOUT event
+[DEBUG]	[23-08-14 20:59:05.693]	[128271 : 128271]	[/home/luncles/myRocketRPC/net/coder/tinypb_coder.cc : 189]	this message ID = [43493475528280358129]
+[DEBUG]	[23-08-14 20:59:05.693]	[128271 : 128271]	[/home/luncles/myRocketRPC/net/coder/tinypb_coder.cc : 191]	package length =[71]
+[DEBUG]	[23-08-14 20:59:05.693]	[128271 : 128271]	[/home/luncles/myRocketRPC/net/coder/tinypb_coder.cc : 266]	encode message[43493475528280358129] success
+[DEBUG]	[23-08-14 20:59:05.693]	[128271 : 128271]	[/home/luncles/myRocketRPC/net/tcp/tcp_connection.cc : 273]	all the data has been sent to client [127.0.0.1:12355]
+[INFO]	[23-08-14 20:59:05.693]	[128271 : 128271]	[/home/luncles/myRocketRPC/net/eventloop.cc : 214]	epoll_event.events = 0
+[DEBUG]	[23-08-14 20:59:05.693]	[128271 : 128271]	[/home/luncles/myRocketRPC/net/eventloop.cc : 214]	add event success, fd[6]
+[INFO]	[23-08-14 20:59:05.693]	[128271 : 128271]	[/home/luncles/myRocketRPC/net/rpc/rpc_channel.cc : 150]	[43493475528280358129] | send rpc request success. Call method[Order.makeOrder], peer address[127.0.0.1:12355], local address[127.0.0.1:32868]
+[INFO]	[23-08-14 20:59:05.693]	[128271 : 128271]	[/home/luncles/myRocketRPC/net/eventloop.cc : 214]	epoll_event.events = 1
+[DEBUG]	[23-08-14 20:59:05.693]	[128271 : 128271]	[/home/luncles/myRocketRPC/net/eventloop.cc : 214]	add event success, fd[6]
+[DEBUG]	[23-08-14 20:59:06.193]	[128271 : 128271]	[/home/luncles/myRocketRPC/net/eventloop.cc : 158]	fd[5] trigger EPOLLIN event
+[DEBUG]	[23-08-14 20:59:06.193]	[128271 : 128271]	[/home/luncles/myRocketRPC/net/timer.cc : 149]	on timer!
+[DEBUG]	[23-08-14 20:59:06.193]	[128271 : 128271]	[/home/luncles/myRocketRPC/net/timer_event.cc : 29]	success create timer event, will excute at [1692017946693]
+[DEBUG]	[23-08-14 20:59:06.193]	[128271 : 128271]	[/home/luncles/myRocketRPC/net/timer.cc : 144]	timer reset to [1692017946693]
+[DEBUG]	[23-08-14 20:59:06.694]	[128271 : 128271]	[/home/luncles/myRocketRPC/net/eventloop.cc : 158]	fd[5] trigger EPOLLIN event
+[DEBUG]	[23-08-14 20:59:06.694]	[128271 : 128271]	[/home/luncles/myRocketRPC/net/timer.cc : 149]	on timer!
+[DEBUG]	[23-08-14 20:59:06.694]	[128271 : 128271]	[/home/luncles/myRocketRPC/net/timer_event.cc : 29]	success create timer event, will excute at [1692017947194]
+[DEBUG]	[23-08-14 20:59:06.694]	[128271 : 128271]	[/home/luncles/myRocketRPC/net/timer.cc : 144]	timer reset to [1692017947194]
+[DEBUG]	[23-08-14 20:59:07.214]	[128271 : 128271]	[/home/luncles/myRocketRPC/net/eventloop.cc : 158]	fd[5] trigger EPOLLIN event
+[DEBUG]	[23-08-14 20:59:07.214]	[128271 : 128271]	[/home/luncles/myRocketRPC/net/timer.cc : 149]	on timer!
+[DEBUG]	[23-08-14 20:59:07.214]	[128271 : 128271]	[/home/luncles/myRocketRPC/net/timer_event.cc : 29]	success create timer event, will excute at [1692017947714]
+[DEBUG]	[23-08-14 20:59:07.214]	[128271 : 128271]	[/home/luncles/myRocketRPC/net/timer.cc : 144]	timer reset to [1692017947714]
+[DEBUG]	[23-08-14 20:59:07.714]	[128271 : 128271]	[/home/luncles/myRocketRPC/net/eventloop.cc : 158]	fd[5] trigger EPOLLIN event
+[DEBUG]	[23-08-14 20:59:07.714]	[128271 : 128271]	[/home/luncles/myRocketRPC/net/timer.cc : 149]	on timer!
+[DEBUG]	[23-08-14 20:59:07.714]	[128271 : 128271]	[/home/luncles/myRocketRPC/net/timer_event.cc : 29]	success create timer event, will excute at [1692017948214]
+[DEBUG]	[23-08-14 20:59:07.714]	[128271 : 128271]	[/home/luncles/myRocketRPC/net/timer.cc : 144]	timer reset to [1692017948214]
+[DEBUG]	[23-08-14 20:59:08.215]	[128271 : 128271]	[/home/luncles/myRocketRPC/net/eventloop.cc : 158]	fd[5] trigger EPOLLIN event
+[DEBUG]	[23-08-14 20:59:08.215]	[128271 : 128271]	[/home/luncles/myRocketRPC/net/timer.cc : 149]	on timer!
+[DEBUG]	[23-08-14 20:59:08.215]	[128271 : 128271]	[/home/luncles/myRocketRPC/net/timer_event.cc : 29]	success create timer event, will excute at [1692017948715]
+[DEBUG]	[23-08-14 20:59:08.215]	[128271 : 128271]	[/home/luncles/myRocketRPC/net/timer.cc : 144]	timer reset to [1692017948715]
+[DEBUG]	[23-08-14 20:59:08.715]	[128271 : 128271]	[/home/luncles/myRocketRPC/net/eventloop.cc : 158]	fd[5] trigger EPOLLIN event
+[DEBUG]	[23-08-14 20:59:08.715]	[128271 : 128271]	[/home/luncles/myRocketRPC/net/timer.cc : 149]	on timer!
+[DEBUG]	[23-08-14 20:59:08.715]	[128271 : 128271]	[/home/luncles/myRocketRPC/net/timer_event.cc : 29]	success create timer event, will excute at [1692017949215]
+[DEBUG]	[23-08-14 20:59:08.715]	[128271 : 128271]	[/home/luncles/myRocketRPC/net/timer.cc : 144]	timer reset to [1692017949215]
+[DEBUG]	[23-08-14 20:59:09.216]	[128271 : 128271]	[/home/luncles/myRocketRPC/net/eventloop.cc : 158]	fd[5] trigger EPOLLIN event
+[DEBUG]	[23-08-14 20:59:09.216]	[128271 : 128271]	[/home/luncles/myRocketRPC/net/timer.cc : 149]	on timer!
+[DEBUG]	[23-08-14 20:59:09.216]	[128271 : 128271]	[/home/luncles/myRocketRPC/net/timer_event.cc : 29]	success create timer event, will excute at [1692017949716]
+[DEBUG]	[23-08-14 20:59:09.216]	[128271 : 128271]	[/home/luncles/myRocketRPC/net/timer.cc : 144]	timer reset to [1692017949716]
+[DEBUG]	[23-08-14 20:59:09.717]	[128271 : 128271]	[/home/luncles/myRocketRPC/net/eventloop.cc : 158]	fd[5] trigger EPOLLIN event
+[DEBUG]	[23-08-14 20:59:09.717]	[128271 : 128271]	[/home/luncles/myRocketRPC/net/timer.cc : 149]	on timer!
+[DEBUG]	[23-08-14 20:59:09.717]	[128271 : 128271]	[/home/luncles/myRocketRPC/net/timer_event.cc : 29]	success create timer event, will excute at [1692017950217]
+[DEBUG]	[23-08-14 20:59:09.717]	[128271 : 128271]	[/home/luncles/myRocketRPC/net/timer.cc : 144]	timer reset to [1692017950217]
+[DEBUG]	[23-08-14 20:59:10.217]	[128271 : 128271]	[/home/luncles/myRocketRPC/net/eventloop.cc : 158]	fd[5] trigger EPOLLIN event
+[DEBUG]	[23-08-14 20:59:10.217]	[128271 : 128271]	[/home/luncles/myRocketRPC/net/timer.cc : 149]	on timer!
+[DEBUG]	[23-08-14 20:59:10.217]	[128271 : 128271]	[/home/luncles/myRocketRPC/net/timer_event.cc : 29]	success create timer event, will excute at [1692017950717]
+[DEBUG]	[23-08-14 20:59:10.217]	[128271 : 128271]	[/home/luncles/myRocketRPC/net/timer.cc : 144]	timer reset to [1692017950717]
+[DEBUG]	[23-08-14 20:59:10.695]	[128271 : 128271]	[/home/luncles/myRocketRPC/net/eventloop.cc : 158]	fd[6] trigger EPOLLIN event
+[DEBUG]	[23-08-14 20:59:10.695]	[128271 : 128271]	[/home/luncles/myRocketRPC/net/tcp/tcp_connection.cc : 98]	success read [71] bytes from addr[127.0.0.1:12355], client fd=[6]
+[DEBUG]	[23-08-14 20:59:10.695]	[128271 : 128271]	[/home/luncles/myRocketRPC/net/coder/tinypb_coder.cc : 68]	get package len = [71]
+[DEBUG]	[23-08-14 20:59:10.695]	[128271 : 128271]	[/home/luncles/myRocketRPC/net/coder/tinypb_coder.cc : 111]	parse messageIDLen=[20]
+[DEBUG]	[23-08-14 20:59:10.695]	[128271 : 128271]	[/home/luncles/myRocketRPC/net/coder/tinypb_coder.cc : 120]	parse messageID=[43493475528280358129]
+[DEBUG]	[23-08-14 20:59:10.695]	[128271 : 128271]	[/home/luncles/myRocketRPC/net/coder/tinypb_coder.cc : 131]	parse methon name length=[15]
+[DEBUG]	[23-08-14 20:59:10.695]	[128271 : 128271]	[/home/luncles/myRocketRPC/net/coder/tinypb_coder.cc : 138]	parse method name = [Order.makeOrder]
+[DEBUG]	[23-08-14 20:59:10.695]	[128271 : 128271]	[/home/luncles/myRocketRPC/net/coder/tinypb_coder.cc : 165]	parse error info = []
+[DEBUG]	[23-08-14 20:59:10.695]	[128271 : 128271]	[/home/luncles/myRocketRPC/net/coder/tinypb_coder.cc : 171]	the message data is [20230810]
+[DEBUG]	[23-08-14 20:59:10.695]	[128271 : 128271]	[/home/luncles/myRocketRPC/net/coder/tinypb_coder.cc : 92]	decode end, read all buffer data
+[INFO]	[23-08-14 20:59:10.695]	[128271 : 128271]	[/home/luncles/myRocketRPC/net/rpc/rpc_channel.cc : 158]	[43493475528280358129] | get rpc response success. Call method[Order.makeOrder], peer address[127.0.0.1:12355], local address[127.0.0.1:32868]
+[INFO]	[23-08-14 20:59:10.695]	[128271 : 128271]	[/home/luncles/myRocketRPC/net/rpc/rpc_channel.cc : 181]	[43493475528280358129] | call rpc success, call method[Order.makeOrder], peer address[127.0.0.1:12355], local address[127.0.0.1:32868]
+[INFO]	[23-08-14 20:59:10.695]	[128271 : 128271]	[/home/luncles/myRocketRPC/testcases/test_rpc_client.cc : 115]	call rpc success in callback, request[price: 100 goods: "apples"], response[orderID: "20230810"]
+[INFO]	[23-08-14 20:59:10.695]	[128271 : 128271]	[/home/luncles/myRocketRPC/testcases/test_rpc_client.cc : 121]	now exit eventloop
+[DEBUG]	[23-08-14 20:59:10.717]	[128271 : 128271]	[/home/luncles/myRocketRPC/net/eventloop.cc : 158]	fd[5] trigger EPOLLIN event
+[DEBUG]	[23-08-14 20:59:10.717]	[128271 : 128271]	[/home/luncles/myRocketRPC/net/timer.cc : 149]	on timer!
+[DEBUG]	[23-08-14 20:59:10.717]	[128271 : 128271]	[/home/luncles/myRocketRPC/net/timer_event.cc : 29]	success create timer event, will excute at [1692017951217]
+[DEBUG]	[23-08-14 20:59:10.717]	[128271 : 128271]	[/home/luncles/myRocketRPC/net/timer.cc : 144]	timer reset to [1692017951217]
+[DEBUG]	[23-08-14 20:59:11.217]	[128271 : 128271]	[/home/luncles/myRocketRPC/net/eventloop.cc : 158]	fd[5] trigger EPOLLIN event
+[DEBUG]	[23-08-14 20:59:11.218]	[128271 : 128271]	[/home/luncles/myRocketRPC/net/timer.cc : 149]	on timer!
+[DEBUG]	[23-08-14 20:59:11.218]	[128271 : 128271]	[/home/luncles/myRocketRPC/net/timer_event.cc : 29]	success create timer event, will excute at [1692017951718]
+[DEBUG]	[23-08-14 20:59:11.218]	[128271 : 128271]	[/home/luncles/myRocketRPC/net/timer.cc : 144]	timer reset to [1692017951718]
+[DEBUG]	[23-08-14 20:59:11.718]	[128271 : 128271]	[/home/luncles/myRocketRPC/net/eventloop.cc : 158]	fd[5] trigger EPOLLIN event
+[DEBUG]	[23-08-14 20:59:11.718]	[128271 : 128271]	[/home/luncles/myRocketRPC/net/timer.cc : 149]	on timer!
+[DEBUG]	[23-08-14 20:59:11.718]	[128271 : 128271]	[/home/luncles/myRocketRPC/net/timer_event.cc : 29]	success create timer event, will excute at [1692017952218]
+[DEBUG]	[23-08-14 20:59:11.718]	[128271 : 128271]	[/home/luncles/myRocketRPC/net/timer.cc : 144]	timer reset to [1692017952218]
+[DEBUG]	[23-08-14 20:59:12.218]	[128271 : 128271]	[/home/luncles/myRocketRPC/net/eventloop.cc : 158]	fd[5] trigger EPOLLIN event
+[DEBUG]	[23-08-14 20:59:12.218]	[128271 : 128271]	[/home/luncles/myRocketRPC/net/timer.cc : 149]	on timer!
+[DEBUG]	[23-08-14 20:59:12.218]	[128271 : 128271]	[/home/luncles/myRocketRPC/net/timer_event.cc : 29]	success create timer event, will excute at [1692017952718]
+[DEBUG]	[23-08-14 20:59:12.218]	[128271 : 128271]	[/home/luncles/myRocketRPC/net/timer.cc : 144]	timer reset to [1692017952718]
+[DEBUG]	[23-08-14 20:59:12.719]	[128271 : 128271]	[/home/luncles/myRocketRPC/net/eventloop.cc : 158]	fd[5] trigger EPOLLIN event
+[DEBUG]	[23-08-14 20:59:12.719]	[128271 : 128271]	[/home/luncles/myRocketRPC/net/timer.cc : 149]	on timer!
+[DEBUG]	[23-08-14 20:59:12.719]	[128271 : 128271]	[/home/luncles/myRocketRPC/net/timer_event.cc : 29]	success create timer event, will excute at [1692017953219]
+[DEBUG]	[23-08-14 20:59:12.719]	[128271 : 128271]	[/home/luncles/myRocketRPC/net/timer.cc : 144]	timer reset to [1692017953219]
+[DEBUG]	[23-08-14 20:59:13.220]	[128271 : 128271]	[/home/luncles/myRocketRPC/net/eventloop.cc : 158]	fd[5] trigger EPOLLIN event
+[DEBUG]	[23-08-14 20:59:13.220]	[128271 : 128271]	[/home/luncles/myRocketRPC/net/timer.cc : 149]	on timer!
+[DEBUG]	[23-08-14 20:59:13.220]	[128271 : 128271]	[/home/luncles/myRocketRPC/net/timer_event.cc : 29]	success create timer event, will excute at [1692017953720]
+[DEBUG]	[23-08-14 20:59:13.220]	[128271 : 128271]	[/home/luncles/myRocketRPC/net/timer.cc : 144]	timer reset to [1692017953720]
+[DEBUG]	[23-08-14 20:59:13.720]	[128271 : 128271]	[/home/luncles/myRocketRPC/net/eventloop.cc : 158]	fd[5] trigger EPOLLIN event
+[DEBUG]	[23-08-14 20:59:13.720]	[128271 : 128271]	[/home/luncles/myRocketRPC/net/timer.cc : 149]	on timer!
+[DEBUG]	[23-08-14 20:59:13.721]	[128271 : 128271]	[/home/luncles/myRocketRPC/net/timer_event.cc : 29]	success create timer event, will excute at [1692017954221]
+[DEBUG]	[23-08-14 20:59:13.721]	[128271 : 128271]	[/home/luncles/myRocketRPC/net/timer.cc : 144]	timer reset to [1692017954221]
+[DEBUG]	[23-08-14 20:59:14.221]	[128271 : 128271]	[/home/luncles/myRocketRPC/net/eventloop.cc : 158]	fd[5] trigger EPOLLIN event
+[DEBUG]	[23-08-14 20:59:14.221]	[128271 : 128271]	[/home/luncles/myRocketRPC/net/timer.cc : 149]	on timer!
+[DEBUG]	[23-08-14 20:59:14.221]	[128271 : 128271]	[/home/luncles/myRocketRPC/net/timer_event.cc : 29]	success create timer event, will excute at [1692017954721]
+[DEBUG]	[23-08-14 20:59:14.221]	[128271 : 128271]	[/home/luncles/myRocketRPC/net/timer.cc : 144]	timer reset to [1692017954721]
+[DEBUG]	[23-08-14 20:59:14.721]	[128271 : 128271]	[/home/luncles/myRocketRPC/net/eventloop.cc : 158]	fd[5] trigger EPOLLIN event
+[DEBUG]	[23-08-14 20:59:14.721]	[128271 : 128271]	[/home/luncles/myRocketRPC/net/timer.cc : 149]	on timer!
+[DEBUG]	[23-08-14 20:59:14.721]	[128271 : 128271]	[/home/luncles/myRocketRPC/net/timer_event.cc : 29]	success create timer event, will excute at [1692017955221]
+[DEBUG]	[23-08-14 20:59:14.721]	[128271 : 128271]	[/home/luncles/myRocketRPC/net/timer.cc : 144]	timer reset to [1692017955221]
+[DEBUG]	[23-08-14 20:59:15.222]	[128271 : 128271]	[/home/luncles/myRocketRPC/net/eventloop.cc : 158]	fd[5] trigger EPOLLIN event
+[DEBUG]	[23-08-14 20:59:15.222]	[128271 : 128271]	[/home/luncles/myRocketRPC/net/timer.cc : 149]	on timer!
+[DEBUG]	[23-08-14 20:59:15.222]	[128271 : 128271]	[/home/luncles/myRocketRPC/net/timer_event.cc : 29]	success create timer event, will excute at [1692017955722]

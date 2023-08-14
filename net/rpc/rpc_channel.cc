@@ -17,6 +17,7 @@
 #include "../../common/error_code.h"
 #include "../../common/msg_id_util.h"
 #include "../coder/tinypb_protocol.h"
+#include "../timer_event.h"
 #include "rpc_controller.h"
 
 namespace myRocket
@@ -97,7 +98,30 @@ namespace myRocket
     // 拿到智能指针
     myRpcChannelPtr channel = shared_from_this();
 
+    // 设置超时定时器
+    TimerEvent::myTimerEventPtr timerEvent = std::make_shared<TimerEvent>(my_controller->GetTimeout(), false, [my_controller, channel]() mutable
+                                                                          {
+      INFOLOG("[%s] | call rpc timeout arrive", my_controller->GetMessageID().c_str());
+      if (my_controller->Finished()) {
+        channel.reset();
+        return;
+      }
+
+      // 发生超时就取消rpc
+      my_controller->StartCancel();
+      my_controller->SetError(ERROR_RPC_CALL_TIMEOUT, "rpc call timeout + " + std::to_string(my_controller->GetTimeout()));
+
+      channel->myCallBack();
+      channel.reset(); });
+
+    // 监听超时事件
+    myTcpClient->AddTimerEvent(timerEvent);
+
     // 连接服务器
+    // 在lambda函数中捕获智能智能，会增加它的引用计数，在lambda函数的一个 lambda 函数中再次捕获一个智能指针，它的引用计数会继续增加。
+    // 这是因为每次捕获智能指针时，都会创建一个新的智能指针对象，并将其初始化为捕获的智能指针的值。这样，新创建的智能指针对象和原来的智能指针对象都会指向同一个内存块，因此引用计数会增加。
+    // 当离开 lambda 函数的作用域时，被捕获的智能指针的引用计数会自动减少。这是因为在离开 lambda 函数的作用域时，lambda 函数内部创建的智能指针对象会被销毁。
+    // 当智能指针对象被销毁时，它会自动减少引用计数。如果引用计数变为 0，则智能指针会自动释放所管理的内存。
     myTcpClient->ConnectServer([requestPtl, this, channel]() mutable
                                {
       RpcController* my_controller = dynamic_cast<RpcController*>(GetController());
@@ -206,10 +230,10 @@ namespace myRocket
   void RpcChannel::myCallBack()
   {
     RpcController *my_controller = dynamic_cast<RpcController *>(GetController());
-    if (my_controller->Finished() || my_controller->GetErrorCode() != 0)
-    {
-      return;
-    }
+    // if (my_controller->Finished())
+    // {
+    //   return;
+    // }
 
     // 执行rpc channel的回调函数
     if (myClosure)
