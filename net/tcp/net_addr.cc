@@ -12,12 +12,12 @@
 #include <unistd.h>
 #include <arpa/inet.h>
 #include <sys/socket.h>
-#include "/home/luncles/myRocketRPC/common/log.h"
+#include "myRocketRPC/common/log.h"
 #include "net_addr.h"
 
-namespace myRocket
+namespace myRocketRPC
 {
-  bool IPNetAddr::StaticCheckAddrValid(std::string &addr)
+  bool IPNetAddr::StaticCheckAddrValid(const std::string &addr)
   {
     size_t pos = addr.find_first_of(":");
     if (pos == addr.npos)

@@ -11,7 +11,7 @@
 #include <arpa/inet.h>
 #include "util.h"
 
-namespace myRocket
+namespace myRocketRPC
 {
     static int gPid = 0;
     static thread_local int gThreadId = 0;

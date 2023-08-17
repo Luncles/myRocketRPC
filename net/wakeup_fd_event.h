@@ -17,7 +17,7 @@
 
 #include "fd_event.h"
 
-namespace myRocket
+namespace myRocketRPC
 {
   class WakeUpFdEvent : public FDEvent
   {

@@ -15,9 +15,9 @@
 #include <sys/socket.h>
 #include <vector>
 #include "fd_event.h"
-#include "/home/luncles/myRocketRPC/common/mutex.h"
+#include "myRocketRPC/common/mutex.h"
 
-namespace myRocket
+namespace myRocketRPC
 {
   class FDEventGroup
   {

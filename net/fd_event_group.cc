@@ -13,9 +13,9 @@
 #include <arpa/inet.h>
 #include <sys/socket.h>
 #include "fd_event_group.h"
-#include "../common/log.h"
+#include "myRocketRPC/common/log.h"
 
-namespace myRocket
+namespace myRocketRPC
 {
   static FDEventGroup *fdEventGroupPtr = nullptr;
   FDEventGroup *FDEventGroup::GetFDEventGroup()

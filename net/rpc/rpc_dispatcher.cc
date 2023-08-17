@@ -16,12 +16,13 @@
 #include <google/protobuf/message.h>
 #include <vector>
 #include "rpc_dispatcher.h"
-#include "../../common/log.h"
-#include "../../common/error_code.h"
+#include "myRocketRPC/common/log.h"
+#include "myRocketRPC/common/error_code.h"
 #include "rpc_controller.h"
-#include "../../common/run_time.h"
+#include "myRocketRPC/common/run_time.h"
+#include "myRocketRPC/net/rpc/rpc_closure.h"
 
-namespace myRocket
+namespace myRocketRPC
 {
 #define DELETE_RESOURCE(XX) \
   if (XX != nullptr)        \
@@ -105,24 +106,31 @@ namespace myRocket
     RunTime::GetRunTime()->messageID = requestProtocol->myMessageID;
     RunTime::GetRunTime()->methodName = methodName;
 
-    service->CallMethod(method, rpcController, requestMessage, responseMessage, nullptr);
+    // 定义回调函数
+    RpcClosure *closure = new RpcClosure(nullptr, [requestMessage, responseMessage, requestProtocol, responseProtocol, connection, rpcController, this]() mutable
+                                         {
+      // 6、将response对象序列化为pbdata，再塞入到TinyProtocol对象中，做Encode后放到sendBuffer中，就可以发送回包了。
+      if (!responseMessage->SerializeToString(&(responseProtocol->myPBData)))
+      {
+        ERRORLOG("[%s] | serialize error, origin message [%s]", requestProtocol->myMessageID.c_str(), responseMessage->ShortDebugString().c_str());
+        SetTinyPBError(responseProtocol, ERROR_FAILED_SERIALIZE, "serialize error");
+        // DELETE_RESOURCE(requestMessage);
+        // DELETE_RESOURCE(responseMessage);
+      }
+      else
+      {
+        responseProtocol->myErrorCode = 0;
+        responseProtocol->myErrorInfo = "";
+        INFOLOG("[%s] | dispatch success, request[%s], response[%s]", requestProtocol->myMessageID.c_str(), requestMessage->ShortDebugString().c_str(), responseMessage->ShortDebugString().c_str());
+        // DELETE_RESOURCE(requestMessage);
+        // DELETE_RESOURCE(responseMessage);
+      }
 
-    // 6、将response对象序列化为pbdata，再塞入到TinyProtocol对象中，做Encode后放到sendBuffer中，就可以发送回包了。
-    if (!responseMessage->SerializeToString(&(responseProtocol->myPBData)))
-    {
-      ERRORLOG("[%s] | serialize error, origin message [%s]", requestProtocol->myMessageID.c_str(), responseMessage->ShortDebugString().c_str());
-      SetTinyPBError(responseProtocol, ERROR_FAILED_SERIALIZE, "serialize error");
-      DELETE_RESOURCE(requestMessage);
-      DELETE_RESOURCE(responseMessage);
-    }
-    else
-    {
-      responseProtocol->myErrorCode = 0;
-      responseProtocol->myErrorInfo = "";
-      INFOLOG("[%s] | dispatch success, request[%s], response[%s]", requestProtocol->myMessageID.c_str(), requestMessage->ShortDebugString().c_str(), responseMessage->ShortDebugString().c_str());
-      DELETE_RESOURCE(requestMessage);
-      DELETE_RESOURCE(responseMessage);
-    }
+      std::vector<AbstractProtocol::myAbstractProtocolPtr> replyMessage;
+      replyMessage.emplace_back(responseProtocol);
+      connection->ReplyRPCResponse(replyMessage); });
+
+    service->CallMethod(method, rpcController, requestMessage, responseMessage, closure);
 
     // std::vector<AbstractProtocol::myAbstractProtocolPtr> replyMessage;
     // replyMessage.push_back(responseProtocol);

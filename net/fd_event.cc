@@ -6,8 +6,6 @@
 > Description:
  ************************************************************************/
 
-#include "fd_event.h"
-
 #include <arpa/inet.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -15,8 +13,9 @@
 #include <sys/socket.h>
 #include <unistd.h>
 #include <fcntl.h>
+#include "fd_event.h"
 
-namespace myRocket
+namespace myRocketRPC
 {
   FDEvent::FDEvent()
   {

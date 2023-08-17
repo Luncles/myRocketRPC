@@ -1,7 +1,5 @@
-#include "config.h"
-
 #include <tinyxml/tinyxml.h>
-
+#include "config.h"
 // #name意思是展开为字符串 ##是联结两个变量
 // 读取一个xml节点
 #define READ_XML_NODE(name, parent)                                           \
@@ -25,7 +23,7 @@
   }                                                                          \
   std::string name##_str = std::string(name##_node->GetText());
 
-namespace myRocket
+namespace myRocketRPC
 {
   // 设置为static，意味着这个指针属于类，而不属于类的任何一个实例，这个指针在整个程序运行期间都存在，且只有一个
   // 单例模式
@@ -61,8 +59,7 @@ namespace myRocket
     if (!loadFile)
     {
       printf(
-          "Start myRocket server error, failed to read config file %s, error "
-          "info[%s]\n",
+          "Start myRocket server error, failed to read config file %s, error info[%s]\n",
           xmlfile, myXmlDocument->ErrorDesc());
       exit(0);
     }
@@ -97,6 +94,27 @@ namespace myRocket
 
     myPort = std::atoi(port_str.c_str());
     myIOThread = std::atoi(io_threads_str.c_str());
+    printf("Server -- PORT[%d], IO Threads[%d]\n", myPort, myIOThread);
+
+    // 读取RPC服务器的地址信息
+    TiXmlElement *stubs_node = root_node->FirstChildElement("stubs");
+
+    if (stubs_node)
+    {
+      for (TiXmlElement *node = stubs_node->FirstChildElement("rpc_server"); node; node = node->NextSiblingElement("rpc_server"))
+      {
+        RpcStub stub;
+        stub.name = std::string(node->FirstChildElement("name")->GetText());
+        stub.timeout = std::atoi(node->FirstChildElement("timeout")->GetText());
+
+        std::string ip = std::string(node->FirstChildElement("ip")->GetText());
+        uint16_t port = std::atoi(node->FirstChildElement("port")->GetText());
+        stub.addr = std::make_shared<IPNetAddr>(ip, port);
+
+        myRpcStubs.insert(std::make_pair(stub.name, stub));
+      }
+    }
+
     printf("Server -- PORT[%d], IO Threads[%d]\n", myPort, myIOThread);
   }
 

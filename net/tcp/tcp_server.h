@@ -16,12 +16,13 @@
 #include <set>
 #include "tcp_accept.h"
 #include "net_addr.h"
-#include "/home/luncles/myRocketRPC/net/eventloop.h"
-#include "/home/luncles/myRocketRPC/net/io_thread_group.h"
-#include "/home/luncles/myRocketRPC/net/fd_event.h"
+#include "myRocketRPC/net/eventloop.h"
+#include "myRocketRPC/net/io_thread_group.h"
+#include "myRocketRPC/net/fd_event.h"
 #include "tcp_connection.h"
+#include "myRocketRPC/net/timer_event.h"
 
-namespace myRocket
+namespace myRocketRPC
 {
   class TCPServer
   {
@@ -56,6 +57,10 @@ namespace myRocket
     std::set<TcpConnection::myTcpConnectionPtr> myClientConnection; // 客户端连接集合
 
     int myClientCount{0}; // 记录连接的客户端数
+
+    int myEraseConnectionInterval{5000}; // 定时任务：每隔一段时间从连接池里删除已经管理的连接
+
+    TimerEvent::myTimerEventPtr myTimerEvent; // 定时器 ：每隔一段时间从连接池里删除已经管理的连接
   };
 }
 

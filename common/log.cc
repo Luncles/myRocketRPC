@@ -10,17 +10,34 @@
 #include <string>
 #include <sstream>
 #include <assert.h>
+#include <signal.h>
 #include "log.h"
 #include "util.h"
 #include "config.h"
 #include "mutex.h"
 #include "run_time.h"
-#include "../net/eventloop.h"
+#include "myRocketRPC/net/eventloop.h"
 
-namespace myRocket
+namespace myRocketRPC
 {
     // 单例模式
     static Logger *gLogger = nullptr;
+
+    // 日志宕机处理函数
+    void CoredumpHandler(int signal_no)
+    {
+        ERRORLOG("process received invalid signal, will exit");
+        gLogger->FlushLogToDisk();
+
+        // 等待两个打印线程退出
+        pthread_join(gLogger->GetAsyncLogger()->myThread, nullptr);
+        pthread_join(gLogger->GetAsyncAppLogger()->myThread, nullptr);
+
+        // 将信号signal_no的处理程序重置为默认值
+        signal(signal_no, SIG_DFL);
+        // 重新发送信号，一般终止程序
+        raise(signal_no);
+    }
 
     Logger *Logger::GetGlobalLogger()
     {
@@ -83,10 +100,18 @@ namespace myRocket
             return;
         }
         // 在使用 std::bind 时，即使您的 SyncLogLoop 函数是定义在同一个类中，也需要加上作用域限定符，因为 std::bind 是一个模板函数，它不知道您要绑定的函数是哪个类的成员函数。因此，您需要使用作用域限定符来指定要绑定的函数所属的类。
-        myTimerEvent = std::make_shared<TimerEvent>(Config::GetGlobalConfig()->myLogSyncInterval, true, std::bind(&myRocket::Logger::SyncLogLoop, this));
+        myTimerEvent = std::make_shared<TimerEvent>(Config::GetGlobalConfig()->myLogSyncInterval, true, std::bind(&myRocketRPC::Logger::SyncLogLoop, this));
 
         // 将同步日志定时器添加到eventloop里
         EventLoop::GetCurrentEventLoop()->AddTimerEvent(myTimerEvent);
+
+        // 添加异常处理，使程序更健壮
+        signal(SIGSEGV, CoredumpHandler);
+        signal(SIGABRT, CoredumpHandler);
+        signal(SIGTERM, CoredumpHandler);
+        signal(SIGKILL, CoredumpHandler);
+        signal(SIGINT, CoredumpHandler);
+        signal(SIGSTKFLT, CoredumpHandler);
     }
 
     void Logger::InitGlobalLogger(int type)
@@ -140,6 +165,17 @@ namespace myRocket
 
             puts(msg.c_str());
         }
+    }
+
+    void Logger::FlushLogToDisk()
+    {
+        // 先把当前的局部缓冲区的日志刷新到打印线程的缓冲区里
+        SyncLogLoop();
+        myAsynLogger->Stop();
+        myAsynLogger->FlushLogToDisk();
+
+        myAsynAppLogger->Stop();
+        myAsynAppLogger->FlushLogToDisk();
     }
 
     std::string LogLevelToString(LogLevel loglevel)
@@ -341,7 +377,11 @@ namespace myRocket
         sem_wait(&loggerInitSem);
     }
 
-    void Stop();
+    void AsyncLogger::Stop()
+    {
+        // 设置为true，那么就会退出异步日志的循环了
+        myStopFlag = true;
+    }
 
     // 将日志刷新到磁盘
     void AsyncLogger::FlushLogToDisk()

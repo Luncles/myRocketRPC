@@ -1,5 +1,5 @@
-#ifndef MYROCKETRPC_COMMON_MUTEX_H
-#define MYROCKETRPC_COMMON_MUTEX_H
+#ifndef MYROCKETRPC_COMMON_MYMUTEX_H
+#define MYROCKETRPC_COMMON_MYMUTEX_H
 
 /*
  * 配置一些锁，保证线程安全
@@ -7,7 +7,7 @@
 
 #include <pthread.h>
 
-namespace myRocket
+namespace myRocketRPC
 {
 
     // RAII，防止退出时忘记解锁

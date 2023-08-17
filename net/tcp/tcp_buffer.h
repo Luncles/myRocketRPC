@@ -16,7 +16,7 @@
 #include <vector>
 #include <memory>
 
-namespace myRocket
+namespace myRocketRPC
 {
   class TCPBuffer
   {

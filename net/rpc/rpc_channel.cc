@@ -13,14 +13,16 @@
 #include <arpa/inet.h>
 #include <sys/socket.h>
 #include "rpc_channel.h"
-#include "../../common/log.h"
-#include "../../common/error_code.h"
-#include "../../common/msg_id_util.h"
-#include "../coder/tinypb_protocol.h"
-#include "../timer_event.h"
+#include "myRocketRPC/common/log.h"
+#include "myRocketRPC/common/error_code.h"
+#include "myRocketRPC/common/msg_id_util.h"
+#include "myRocketRPC/net/coder/tinypb_protocol.h"
+#include "myRocketRPC/net/timer_event.h"
 #include "rpc_controller.h"
+#include "myRocketRPC/net/tcp/net_addr.h"
+#include "myRocketRPC/common/config.h"
 
-namespace myRocket
+namespace myRocketRPC
 {
   RpcChannel::RpcChannel(NetAddr::myNetAddrPtr peerAddr) : myPeerAddr(peerAddr)
   {
@@ -63,7 +65,7 @@ namespace myRocket
     {
 
       // tinypb消息包需要一个message id，没有的话就生成一个
-      requestPtl->myMessageID = MsgIDUtil::MsgIDGenerator();
+      requestPtl->myMessageID = myRocketRPC::MsgIDUtil::MsgIDGenerator();
       my_controller->SetMessageID(requestPtl->myMessageID);
     }
     else
@@ -230,10 +232,10 @@ namespace myRocket
   void RpcChannel::myCallBack()
   {
     RpcController *my_controller = dynamic_cast<RpcController *>(GetController());
-    // if (my_controller->Finished())
-    // {
-    //   return;
-    // }
+    if (my_controller->Finished())
+    {
+      return;
+    }
 
     // 执行rpc channel的回调函数
     if (myClosure)
@@ -246,4 +248,27 @@ namespace myRocket
     }
   }
 
+  // 从配置文件找到rpc服务器地址
+  IPNetAddr::myNetAddrPtr RpcChannel::FindAddr(const std::string &str)
+  {
+    if (IPNetAddr::StaticCheckAddrValid(str))
+    {
+      return std::make_shared<IPNetAddr>(str);
+    }
+    else
+    {
+      // 根据stubs名找到对应的服务器
+      auto it = Config::GetGlobalConfig()->myRpcStubs.find(str);
+      if (it != Config::GetGlobalConfig()->myRpcStubs.end())
+      {
+        INFOLOG("find addr [%s] in global config of str[%s]", (*it).second.addr->ToString().c_str(), str.c_str());
+        return (*it).second.addr;
+      }
+      else
+      {
+        INFOLOG("can not find addr in global config of str[%s]", str.c_str());
+        return nullptr;
+      }
+    }
+  }
 }

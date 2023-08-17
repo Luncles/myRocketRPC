@@ -15,7 +15,7 @@
 #include <sys/socket.h>
 #include <memory>
 
-namespace myRocket
+namespace myRocketRPC
 {
   // 将这个基类定义成一个含有智能指针的类
   struct AbstractProtocol : public std::enable_shared_from_this<AbstractProtocol>

@@ -3,9 +3,18 @@
 
 #include <string>
 #include <tinyxml/tinyxml.h>
+#include <map>
+#include "myRocketRPC/net/tcp/net_addr.h"
 
-namespace myRocket
+namespace myRocketRPC
 {
+    struct RpcStub
+    {
+        std::string name;
+        IPNetAddr::myNetAddrPtr addr;
+        int timeout{2000};
+    };
+
     class Config
     {
     public:
@@ -33,6 +42,9 @@ namespace myRocket
 
         int myPort{0};     // 端口号
         int myIOThread{0}; // io线程数
+
+        std::map<std::string, RpcStub> myRpcStubs;
+
     private:
     };
 }

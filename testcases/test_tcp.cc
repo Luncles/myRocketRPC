@@ -13,23 +13,23 @@
 #include <arpa/inet.h>
 #include <sys/socket.h>
 #include <memory>
-#include "/home/luncles/myRocketRPC/common/log.h"
-#include "/home/luncles/myRocketRPC/net/tcp/net_addr.h"
-#include "/home/luncles/myRocketRPC/common/config.h"
-#include "/home/luncles/myRocketRPC/net/tcp/tcp_server.h"
+#include "myRocketRPC/common/log.h"
+#include "myRocketRPC/net/tcp/net_addr.h"
+#include "myRocketRPC/common/config.h"
+#include "myRocketRPC/net/tcp/tcp_server.h"
 
 void test_tcp_server()
 {
-  myRocket::IPNetAddr::myNetAddrPtr addrPtr = std::make_shared<myRocket::IPNetAddr>("127.0.0.1", 12355);
+  myRocketRPC::IPNetAddr::myNetAddrPtr addrPtr = std::make_shared<myRocketRPC::IPNetAddr>("127.0.0.1", 12355);
   DEBUGLOG("create address [%s]", addrPtr->ToString().c_str());
-  myRocket::TCPServer tcpServer(addrPtr);
+  myRocketRPC::TCPServer tcpServer(addrPtr);
   tcpServer.Start();
 }
 
 int main()
 {
-  myRocket::Config::SetGlobalConfig("/home/luncles/myRocketRPC/conf/myRocket.xml");
-  myRocket::Logger::InitGlobalLogger(1);
+  myRocketRPC::Config::SetGlobalConfig("/home/luncles/myRocketRPC/conf/myRocket.xml");
+  myRocketRPC::Logger::InitGlobalLogger(1);
 
   // myRocket::IPNetAddr addr("127.0.0.1", 12366);
   // DEBUGLOG("create address[%s]", addr.ToString().c_str());

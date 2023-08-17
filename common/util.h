@@ -13,7 +13,7 @@
 #include <unistd.h>
 #include <sys/time.h>
 
-namespace myRocket
+namespace myRocketRPC
 {
     pid_t GetPid();
     pid_t GetThreadId();

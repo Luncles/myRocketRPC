@@ -12,10 +12,10 @@
 #include <unistd.h>
 #include <arpa/inet.h>
 #include <sys/socket.h>
-#include "/home/luncles/myRocketRPC/common/log.h"
+#include "myRocketRPC/common/log.h"
 #include "tcp_accept.h"
 
-namespace myRocket
+namespace myRocketRPC
 {
   TcpAccept::TcpAccept(NetAddr::myNetAddrPtr localAddr) : myLocalAddr(localAddr)
   {

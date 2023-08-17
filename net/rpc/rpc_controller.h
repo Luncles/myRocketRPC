@@ -15,10 +15,10 @@
 #include <sys/socket.h>
 #include <google/protobuf/service.h>
 #include <google/protobuf/stubs/callback.h>
-#include "../tcp/net_addr.h"
-#include "../../common/log.h"
+#include "myRocketRPC/net/tcp/net_addr.h"
+#include "myRocketRPC/common/log.h"
 
-namespace myRocket
+namespace myRocketRPC
 {
   class RpcController : public google::protobuf::RpcController
   {

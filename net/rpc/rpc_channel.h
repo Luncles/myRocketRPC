@@ -17,20 +17,20 @@
 #include <google/protobuf/service.h>
 #include <google/protobuf/descriptor.h>
 #include <google/protobuf/message.h>
-#include "../tcp/net_addr.h"
-#include "../tcp/tcp_client.h"
+#include "myRocketRPC/net/tcp/net_addr.h"
+#include "myRocketRPC/net/tcp/tcp_client.h"
 
-namespace myRocket
+namespace myRocketRPC
 {
 // 对RPC的一些基本操作进行封装
 #define NEWMESSAGE(type, var_name) \
   std::shared_ptr<type> var_name = std::make_shared<type>();
 
 #define NEWRPCCONTROLLER(var_name) \
-  std::shared_ptr<myRocket::RpcController> var_name = std::make_shared<myRocket::RpcController>();
+  std::shared_ptr<myRocketRPC::RpcController> var_name = std::make_shared<myRocketRPC::RpcController>();
 
 #define NEWRPCCHANNEL(addr, var_name) \
-  std::shared_ptr<myRocket::RpcChannel> var_name = std::make_shared<myRocket::RpcChannel>(std::make_shared<myRocket::IPNetAddr>(addr));
+  std::shared_ptr<myRocketRPC::RpcChannel> var_name = std::make_shared<myRocketRPC::RpcChannel>(myRocketRPC::RpcChannel::FindAddr(addr));
 
 /*
   // rpcController->SetTimeout(10000);
@@ -51,6 +51,13 @@ namespace myRocket
 
   class RpcChannel : public google::protobuf::RpcChannel, public std::enable_shared_from_this<RpcChannel>
   {
+  public:
+    // 获取 addr
+    // 若 str 是 ip:port, 直接返回
+    // 否则认为是 rpc 服务名，尝试从配置文件里面获取对应的 ip:port（后期会加上服务发现）
+    // rpc一般是分布式的，不同的服务在不同的服务器上，所以需要根据服务去找对应的服务器地址
+    static IPNetAddr::myNetAddrPtr FindAddr(const std::string &str);
+
   public:
     using myRpcChannelPtr = std::shared_ptr<RpcChannel>;
     using myControllerPtr = std::shared_ptr<google::protobuf::RpcController>;

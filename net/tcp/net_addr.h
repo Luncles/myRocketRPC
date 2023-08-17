@@ -15,7 +15,7 @@
 #include <sys/socket.h>
 #include <memory>
 
-namespace myRocket
+namespace myRocketRPC
 {
   // 定义一个基类，可以让其他协议重用
   class NetAddr
@@ -45,7 +45,7 @@ namespace myRocket
   class IPNetAddr : public NetAddr
   {
   public:
-    static bool StaticCheckAddrValid(std::string &addr);
+    static bool StaticCheckAddrValid(const std::string &addr);
 
   public:
     // 支持三种构造方式：1、ip，port；2，ip:port；3、sockaddr_in

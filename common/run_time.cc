@@ -14,7 +14,7 @@
 #include <sys/socket.h>
 #include "run_time.h"
 
-namespace myRocket
+namespace myRocketRPC
 {
   thread_local RunTime *myRunTime = nullptr;
   RunTime *RunTime::GetRunTime()
@@ -25,5 +25,10 @@ namespace myRocket
     }
     myRunTime = new RunTime();
     return myRunTime;
+  }
+
+  RpcInterface *RunTime::GetRpcInterface()
+  {
+    return myRpcInterface;
   }
 }

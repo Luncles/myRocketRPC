@@ -15,11 +15,15 @@
 #include <arpa/inet.h>
 #include <sys/socket.h>
 
-namespace myRocket
+namespace myRocketRPC
 {
+  class RpcInterface;
+
   class RunTime
   {
   public:
+    RpcInterface *GetRpcInterface();
+
   public:
     // 全局的RunTime
     static RunTime *GetRunTime();
@@ -27,6 +31,7 @@ namespace myRocket
   public:
     std::string messageID;
     std::string methodName;
+    RpcInterface *myRpcInterface{nullptr};
   };
 }
 

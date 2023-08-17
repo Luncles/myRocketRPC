@@ -16,7 +16,7 @@
 #include <memory>
 #include "net_addr.h"
 
-namespace myRocket
+namespace myRocketRPC
 {
   class TcpAccept
   {

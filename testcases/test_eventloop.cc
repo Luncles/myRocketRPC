@@ -12,13 +12,13 @@
 #include <unistd.h>
 #include <arpa/inet.h>
 #include <sys/socket.h>
-#include "/home/luncles/myRocketRPC/common/config.h"
-#include "/home/luncles/myRocketRPC/common/log.h"
-#include "/home/luncles/myRocketRPC/net/eventloop.h"
-#include "/home/luncles/myRocketRPC/net/fd_event.h"
-#include "/home/luncles/myRocketRPC/net/timer.h"
-#include "/home/luncles/myRocketRPC/net/io_thread.h"
-#include "/home/luncles/myRocketRPC/net/io_thread_group.h"
+#include "myRocketRPC/common/config.h"
+#include "myRocketRPC/common/log.h"
+#include "myRocketRPC/net/eventloop.h"
+#include "myRocketRPC/net/fd_event.h"
+#include "myRocketRPC/net/timer.h"
+#include "myRocketRPC/net/io_thread.h"
+#include "myRocketRPC/net/io_thread_group.h"
 
 void TestIOThread()
 {
@@ -50,9 +50,9 @@ void TestIOThread()
     exit(1);
   }
 
-  myRocket::FDEvent fdEvent(listenfd);
+  myRocketRPC::FDEvent fdEvent(listenfd);
   // 将监听fd及其对应读事件添加到epoll事件中，这时候其实还没有添加到epoll监听事件表，只有调用AddEpollEvent函数才会完全开始epoll监听
-  fdEvent.Listen(myRocket::FDEvent::FdTriggerEvent::IN_EVENT, [listenfd]()
+  fdEvent.Listen(myRocketRPC::FDEvent::FdTriggerEvent::IN_EVENT, [listenfd]()
                  {
     struct sockaddr_in clientAddress;
     socklen_t addressLen = sizeof(clientAddress);
@@ -63,7 +63,7 @@ void TestIOThread()
 
   // 创建timerEvent
   int timerNum = 0;
-  myRocket::TimerEvent::myTimerEventPtr timerEvent = std::make_shared<myRocket::TimerEvent>(
+  myRocketRPC::TimerEvent::myTimerEventPtr timerEvent = std::make_shared<myRocketRPC::TimerEvent>(
       5000, true, [&timerNum]()
       { INFOLOG("trigger timer event, count=[%d]", timerNum++); });
 
@@ -81,13 +81,13 @@ void TestIOThread()
   // ioThread.Join();
 
   // 测试io线程组
-  myRocket::IOThreadGroup ioThreadGroup(2);
+  myRocketRPC::IOThreadGroup ioThreadGroup(2);
 
-  myRocket::IOThread *ioThread1 = ioThreadGroup.GetIOThread();
+  myRocketRPC::IOThread *ioThread1 = ioThreadGroup.GetIOThread();
   ioThread1->GetEventLoop()->AddEpollEvent(&fdEvent);
   ioThread1->GetEventLoop()->AddTimerEvent(timerEvent);
 
-  myRocket::IOThread *ioThread2 = ioThreadGroup.GetIOThread();
+  myRocketRPC::IOThread *ioThread2 = ioThreadGroup.GetIOThread();
   ioThread2->GetEventLoop()->AddTimerEvent(timerEvent);
 
   ioThreadGroup.Start();
@@ -97,9 +97,9 @@ void TestIOThread()
 
 int main()
 {
-  myRocket::Config::SetGlobalConfig("/home/luncles/myRocketRPC/conf/myRocket.xml"); // 获取配置参数
+  myRocketRPC::Config::SetGlobalConfig("/home/luncles/myRocketRPC/conf/myRocket.xml"); // 获取配置参数
 
-  myRocket::Logger::InitGlobalLogger(); // 初始化日志器才能够进行日志打印
+  myRocketRPC::Logger::InitGlobalLogger(); // 初始化日志器才能够进行日志打印
 
   // 到io线程去执行任务
   TestIOThread();

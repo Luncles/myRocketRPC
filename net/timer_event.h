@@ -17,7 +17,7 @@
 #include <functional>
 #include <memory>
 
-namespace myRocket
+namespace myRocketRPC
 {
   class TimerEvent
   {

@@ -5,16 +5,16 @@
 > Created Time:  Sat 15 Jul 2023 10:35:08 PM CST
 > Description:
  ************************************************************************/
-#include "eventloop.h"
 
 #include <string.h>
 #include <sys/epoll.h>
 #include <sys/eventfd.h>
 #include <sys/socket.h>
 
-#include "/home/luncles/myRocketRPC/common/log.h"
-#include "/home/luncles/myRocketRPC/common/util.h"
-#include "/home/luncles/myRocketRPC/common/mutex.h"
+#include "myRocketRPC/common/log.h"
+#include "myRocketRPC/common/util.h"
+#include "myRocketRPC/common/mutex.h"
+#include "eventloop.h"
 
 // 将fdEvent事件添加到epoll事件表中
 #define ADD_TO_EPOLL()                                                                                             \
@@ -49,7 +49,7 @@
   myListenfds.erase(fdEvent->GetFD());                                                                                \
   DEBUGLOG("delete event success, fd[%d]", fdEvent->GetFD());
 
-namespace myRocket
+namespace myRocketRPC
 {
   // 创建具有线程周期的静态变量，在线程开始的时候被生成，在线程结束的时候被销毁，并且每一个线程中都有独立的变量实例
   static thread_local EventLoop *currentEventloop = nullptr;
@@ -148,6 +148,7 @@ namespace myRocket
           // 如果返回的FDEvent是空指针，就没办法处理
           if (fdEvent == nullptr)
           {
+            ERRORLOG("fd event = nullptr, continue");
             continue;
           }
 

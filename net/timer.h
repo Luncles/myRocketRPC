@@ -16,9 +16,9 @@
 #include <map>
 #include "fd_event.h"
 #include "timer_event.h"
-#include "/home/luncles/myRocketRPC/common/mutex.h"
+#include "myRocketRPC/common/mutex.h"
 
-namespace myRocket
+namespace myRocketRPC
 {
   class Timer : public FDEvent
   {

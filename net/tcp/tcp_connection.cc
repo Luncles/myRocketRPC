@@ -13,13 +13,13 @@
 #include <arpa/inet.h>
 #include <sys/socket.h>
 #include "tcp_connection.h"
-#include "../../common/log.h"
-#include "../fd_event_group.h"
-#include "../coder/string_coder.h"
-#include "../coder/tinypb_coder.h"
-#include "../rpc/rpc_dispatcher.h"
+#include "myRocketRPC/common/log.h"
+#include "myRocketRPC/net/fd_event_group.h"
+#include "myRocketRPC/net/coder/string_coder.h"
+#include "myRocketRPC/net/coder/tinypb_coder.h"
+#include "myRocketRPC/net/rpc/rpc_dispatcher.h"
 
-namespace myRocket
+namespace myRocketRPC
 {
   TcpConnection::TcpConnection(EventLoop *eventloop, int fd, int bufferSize, IPNetAddr::myNetAddrPtr serverAddr, IPNetAddr::myNetAddrPtr clientAddr, TcpConnectionType type) : myEventLoop(eventloop), myFD(fd), myServerAddr(serverAddr), myClientAddr(clientAddr), myState(NotConnected), myConnectionType(type)
   {
@@ -183,7 +183,7 @@ namespace myRocket
         // 每一个请求都会调用rpc方法，然后获得响应tinypb，将响应放到发送缓冲区里，再监听可写事件
         std::shared_ptr<TinyProtocol> message = std::make_shared<TinyProtocol>();
         RpcDispatcher::GetRpcDispatcher()->Dispatch(result[i], message, this);
-        replyMessages.emplace_back(message);
+        // replyMessages.emplace_back(message);
       }
       // std::vector<char> tmp;
       // int size = myRecvBuffer->ReadRemain();
@@ -197,10 +197,10 @@ namespace myRocket
       // }
 
       // mySendBuffer->WriteToBuffer(msg.c_str(), msg.length());
-      myAbstractCoder->Encode(replyMessages, mySendBuffer);
+      // myAbstractCoder->Encode(replyMessages, mySendBuffer);
 
       // 启动监听可写事件
-      ListenWrite();
+      // ListenWrite();
     }
     else
     {
@@ -395,5 +395,12 @@ namespace myRocket
   void TcpConnection::PushRecvMessage(const std::string &recvMessageID, std::function<void(AbstractProtocol::myAbstractProtocolPtr)> RecvCallBack)
   {
     myRecvCbCollection.insert(std::make_pair(recvMessageID, RecvCallBack));
+  }
+
+  // 将rpc响应发回rpc客户端
+  void TcpConnection::ReplyRPCResponse(std::vector<AbstractProtocol::myAbstractProtocolPtr> &replyMessage)
+  {
+    myAbstractCoder->Encode(replyMessage, mySendBuffer);
+    ListenWrite();
   }
 }

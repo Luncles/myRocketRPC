@@ -17,11 +17,11 @@
 #include <map>
 #include <google/protobuf/service.h>
 
-#include "../coder/abstract_protocol.h"
-#include "../coder/tinypb_protocol.h"
-#include "../tcp/tcp_connection.h"
+#include "myRocketRPC/net/coder/abstract_protocol.h"
+#include "myRocketRPC/net/coder/tinypb_protocol.h"
+#include "myRocketRPC/net/tcp/tcp_connection.h"
 
-namespace myRocket
+namespace myRocketRPC
 {
   // class TcpConnection;
 

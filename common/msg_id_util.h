@@ -15,7 +15,7 @@
 #include <arpa/inet.h>
 #include <sys/socket.h>
 
-namespace myRocket
+namespace myRocketRPC
 {
   class MsgIDUtil
   {

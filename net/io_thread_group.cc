@@ -14,7 +14,7 @@
 #include <sys/socket.h>
 #include "io_thread_group.h"
 
-namespace myRocket
+namespace myRocketRPC
 {
   IOThreadGroup::IOThreadGroup(size_t size) : mySize(size)
   {

@@ -19,7 +19,7 @@
 #include <pthread.h>
 #include "eventloop.h"
 
-namespace myRocket
+namespace myRocketRPC
 {
   class IOThread
   {

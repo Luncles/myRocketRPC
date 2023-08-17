@@ -14,7 +14,7 @@
 #include <sys/socket.h>
 #include "tinypb_protocol.h"
 
-namespace myRocket
+namespace myRocketRPC
 {
   char TinyProtocol::PB_START = 0x02;
   char TinyProtocol::PB_END = 0x03;

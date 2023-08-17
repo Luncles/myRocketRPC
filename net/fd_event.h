@@ -13,7 +13,7 @@
 
 #include <functional>
 
-namespace myRocket
+namespace myRocketRPC
 {
   class FDEvent
   {

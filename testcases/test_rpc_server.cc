@@ -14,22 +14,22 @@
 #include <sys/socket.h>
 #include <memory>
 #include <google/protobuf/service.h>
-#include "/home/luncles/myRocketRPC/common/config.h"
-#include "/home/luncles/myRocketRPC/common/log.h"
-#include "/home/luncles/myRocketRPC/net/eventloop.h"
-#include "/home/luncles/myRocketRPC/net/fd_event.h"
-#include "/home/luncles/myRocketRPC/net/timer.h"
-#include "/home/luncles/myRocketRPC/net/io_thread.h"
-#include "/home/luncles/myRocketRPC/net/io_thread_group.h"
-#include "../net/tcp/tcp_connection.h"
-#include "../net/tcp/tcp_server.h"
-#include "../net/coder/string_coder.h"
-#include "../net/coder/tinypb_coder.h"
-#include "../net/coder/tinypb_protocol.h"
-#include "../net/rpc/rpc_dispatcher.h"
-#include "../common/log.h"
+#include "myRocketRPC/common/config.h"
+#include "myRocketRPC/common/log.h"
+#include "myRocketRPC/net/eventloop.h"
+#include "myRocketRPC/net/fd_event.h"
+#include "myRocketRPC/net/timer.h"
+#include "myRocketRPC/net/io_thread.h"
+#include "myRocketRPC/net/io_thread_group.h"
+#include "myRocketRPC/net/tcp/tcp_connection.h"
+#include "myRocketRPC/net/tcp/tcp_server.h"
+#include "myRocketRPC/net/coder/string_coder.h"
+#include "myRocketRPC/net/coder/tinypb_coder.h"
+#include "myRocketRPC/net/coder/tinypb_protocol.h"
+#include "myRocketRPC/net/rpc/rpc_dispatcher.h"
+#include "myRocketRPC/common/log.h"
 #include "order.pb.h"
-#include "../common/run_time.h"
+#include "myRocketRPC/common/run_time.h"
 
 // RPC的用法：用一个派生类去继承proto文件里生成的RPC服务接口类，在派生类中去实现接口类的虚函数
 class OrderImpl : public Order
@@ -75,20 +75,20 @@ int main(int argc, char *argv[])
     printf("./test_rpc_server ../conf/myRocket.xml \n");
     return 0;
   }
-  myRocket::Config::SetGlobalConfig(argv[1]);
-  myRocket::Logger::InitGlobalLogger(1);
+  myRocketRPC::Config::SetGlobalConfig(argv[1]);
+  myRocketRPC::Logger::InitGlobalLogger(1);
 
   // 下面是把OrderImpl类添加到rpc调用中的过程
   // 先定义一个OrderImpl类的服务指针
   std::shared_ptr<OrderImpl> service = std::make_shared<OrderImpl>();
 
   // 然后注册到分发器里
-  myRocket::RpcDispatcher::GetRpcDispatcher()->RegisterService(service);
+  myRocketRPC::RpcDispatcher::GetRpcDispatcher()->RegisterService(service);
 
   // 接下来就是启动服务器了
-  myRocket::IPNetAddr::myNetAddrPtr addrPtr = std::make_shared<myRocket::IPNetAddr>("127.0.0.1", myRocket::Config::GetGlobalConfig()->myPort);
+  myRocketRPC::IPNetAddr::myNetAddrPtr addrPtr = std::make_shared<myRocketRPC::IPNetAddr>("127.0.0.1", myRocketRPC::Config::GetGlobalConfig()->myPort);
   DEBUGLOG("create address [%s]", addrPtr->ToString().c_str());
-  myRocket::TCPServer tcpServer(addrPtr);
+  myRocketRPC::TCPServer tcpServer(addrPtr);
   tcpServer.Start();
 
   return 0;

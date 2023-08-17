@@ -34,9 +34,9 @@
 #include <memory>
 #include <semaphore.h>
 #include "mutex.h"
-#include "../net/timer_event.h"
+#include "myRocketRPC/net/timer_event.h"
 
-namespace myRocket
+namespace myRocketRPC
 {
     /*C风格化输出*/
     template <typename... Args>
@@ -67,41 +67,41 @@ namespace myRocket
     std::string LogLevelToString(LogLevel);
     LogLevel StringToLogLevel(const std::string &loglevelStr);
 
-#define DEBUGLOG(str, ...)                                                                                                                                                                                                                   \
-    if (myRocket::Logger::GetGlobalLogger()->GetMySetLevel() <= myRocket::DEBUG)                                                                                                                                                             \
-    {                                                                                                                                                                                                                                        \
-        myRocket::Logger::GetGlobalLogger()->PushLog(myRocket::LogEvent(myRocket::LogLevel::DEBUG).toString() + "[" + std::string(__FILE__) + " : " + std::to_string(__LINE__) + "]\t" + myRocket::FormatString(str, ##__VA_ARGS__) + "\n"); \
+#define DEBUGLOG(str, ...)                                                                                                                                                                                                                               \
+    if (myRocketRPC::Logger::GetGlobalLogger()->GetMySetLevel() <= myRocketRPC::DEBUG)                                                                                                                                                                   \
+    {                                                                                                                                                                                                                                                    \
+        myRocketRPC::Logger::GetGlobalLogger()->PushLog(myRocketRPC::LogEvent(myRocketRPC::LogLevel::DEBUG).toString() + "[" + std::string(__FILE__) + " : " + std::to_string(__LINE__) + "]\t" + myRocketRPC::FormatString(str, ##__VA_ARGS__) + "\n"); \
     }
 
-#define INFOLOG(str, ...)                                                                                                                                                                                                                   \
-    if (myRocket::Logger::GetGlobalLogger()->GetMySetLevel() <= myRocket::INFO)                                                                                                                                                             \
-    {                                                                                                                                                                                                                                       \
-        myRocket::Logger::GetGlobalLogger()->PushLog(myRocket::LogEvent(myRocket::LogLevel::INFO).toString() + "[" + std::string(__FILE__) + " : " + std::to_string(__LINE__) + "]\t" + myRocket::FormatString(str, ##__VA_ARGS__) + "\n"); \
+#define INFOLOG(str, ...)                                                                                                                                                                                                                               \
+    if (myRocketRPC::Logger::GetGlobalLogger()->GetMySetLevel() <= myRocketRPC::INFO)                                                                                                                                                                   \
+    {                                                                                                                                                                                                                                                   \
+        myRocketRPC::Logger::GetGlobalLogger()->PushLog(myRocketRPC::LogEvent(myRocketRPC::LogLevel::INFO).toString() + "[" + std::string(__FILE__) + " : " + std::to_string(__LINE__) + "]\t" + myRocketRPC::FormatString(str, ##__VA_ARGS__) + "\n"); \
     }
 
-#define ERRORLOG(str, ...)                                                                                                                                                                                                                   \
-    if (myRocket::Logger::GetGlobalLogger()->GetMySetLevel() <= myRocket::ERROR)                                                                                                                                                             \
-    {                                                                                                                                                                                                                                        \
-        myRocket::Logger::GetGlobalLogger()->PushLog(myRocket::LogEvent(myRocket::LogLevel::ERROR).toString() + "[" + std::string(__FILE__) + " : " + std::to_string(__LINE__) + "]\t" + myRocket::FormatString(str, ##__VA_ARGS__) + "\n"); \
+#define ERRORLOG(str, ...)                                                                                                                                                                                                                               \
+    if (myRocketRPC::Logger::GetGlobalLogger()->GetMySetLevel() <= myRocketRPC::ERROR)                                                                                                                                                                   \
+    {                                                                                                                                                                                                                                                    \
+        myRocketRPC::Logger::GetGlobalLogger()->PushLog(myRocketRPC::LogEvent(myRocketRPC::LogLevel::ERROR).toString() + "[" + std::string(__FILE__) + " : " + std::to_string(__LINE__) + "]\t" + myRocketRPC::FormatString(str, ##__VA_ARGS__) + "\n"); \
     }
 
 // 打印应用日志的方法只在rpc服务里调用
-#define APPDEBUGLOG(str, ...)                                                                                                                                                                                                                   \
-    if (myRocket::Logger::GetGlobalLogger()->GetMySetLevel() <= myRocket::DEBUG)                                                                                                                                                                \
-    {                                                                                                                                                                                                                                           \
-        myRocket::Logger::GetGlobalLogger()->PushAppLog(myRocket::LogEvent(myRocket::LogLevel::DEBUG).toString() + "[" + std::string(__FILE__) + " : " + std::to_string(__LINE__) + "]\t" + myRocket::FormatString(str, ##__VA_ARGS__) + "\n"); \
+#define APPDEBUGLOG(str, ...)                                                                                                                                                                                                                               \
+    if (myRocketRPC::Logger::GetGlobalLogger()->GetMySetLevel() <= myRocketRPC::DEBUG)                                                                                                                                                                      \
+    {                                                                                                                                                                                                                                                       \
+        myRocketRPC::Logger::GetGlobalLogger()->PushAppLog(myRocketRPC::LogEvent(myRocketRPC::LogLevel::DEBUG).toString() + "[" + std::string(__FILE__) + " : " + std::to_string(__LINE__) + "]\t" + myRocketRPC::FormatString(str, ##__VA_ARGS__) + "\n"); \
     }
 
-#define APPINFOLOG(str, ...)                                                                                                                                                                                                                   \
-    if (myRocket::Logger::GetGlobalLogger()->GetMySetLevel() <= myRocket::INFO)                                                                                                                                                                \
-    {                                                                                                                                                                                                                                          \
-        myRocket::Logger::GetGlobalLogger()->PushAppLog(myRocket::LogEvent(myRocket::LogLevel::INFO).toString() + "[" + std::string(__FILE__) + " : " + std::to_string(__LINE__) + "]\t" + myRocket::FormatString(str, ##__VA_ARGS__) + "\n"); \
+#define APPINFOLOG(str, ...)                                                                                                                                                                                                                               \
+    if (myRocketRPC::Logger::GetGlobalLogger()->GetMySetLevel() <= myRocketRPC::INFO)                                                                                                                                                                      \
+    {                                                                                                                                                                                                                                                      \
+        myRocketRPC::Logger::GetGlobalLogger()->PushAppLog(myRocketRPC::LogEvent(myRocketRPC::LogLevel::INFO).toString() + "[" + std::string(__FILE__) + " : " + std::to_string(__LINE__) + "]\t" + myRocketRPC::FormatString(str, ##__VA_ARGS__) + "\n"); \
     }
 
-#define APPERRORLOG(str, ...)                                                                                                                                                                                                                   \
-    if (myRocket::Logger::GetGlobalLogger()->GetMySetLevel() <= myRocket::ERROR)                                                                                                                                                                \
-    {                                                                                                                                                                                                                                           \
-        myRocket::Logger::GetGlobalLogger()->PushAppLog(myRocket::LogEvent(myRocket::LogLevel::ERROR).toString() + "[" + std::string(__FILE__) + " : " + std::to_string(__LINE__) + "]\t" + myRocket::FormatString(str, ##__VA_ARGS__) + "\n"); \
+#define APPERRORLOG(str, ...)                                                                                                                                                                                                                               \
+    if (myRocketRPC::Logger::GetGlobalLogger()->GetMySetLevel() <= myRocketRPC::ERROR)                                                                                                                                                                      \
+    {                                                                                                                                                                                                                                                       \
+        myRocketRPC::Logger::GetGlobalLogger()->PushAppLog(myRocketRPC::LogEvent(myRocketRPC::LogLevel::ERROR).toString() + "[" + std::string(__FILE__) + " : " + std::to_string(__LINE__) + "]\t" + myRocketRPC::FormatString(str, ##__VA_ARGS__) + "\n"); \
     }
 
     // 异步日志类
@@ -139,7 +139,7 @@ namespace myRocket
         // 日志输出路径
         std::string myFilePath;
 
-                // 单个日志文件的最大大小，单位为字节
+        // 单个日志文件的最大大小，单位为字节
         int myMaxFileSize{0};
 
         // 生产者消费者模型，有两个信号量进行资源的同步
@@ -190,6 +190,16 @@ namespace myRocket
             return mySetLevel;
         }
 
+        AsyncLogger::myAsyncLoggerPtr GetAsyncLogger()
+        {
+            return myAsynLogger;
+        }
+
+        AsyncLogger::myAsyncLoggerPtr GetAsyncAppLogger()
+        {
+            return myAsynAppLogger;
+        }
+
         // 将一条底层日志添加到局部日志器Logger的buffer中
         void PushLog(const std::string &msg);
 
@@ -206,6 +216,9 @@ namespace myRocket
         {
             return mySetLevel;
         }
+
+        // 将底层日志和rpc日志刷新到磁盘，不同于打印日志器，只有当服务器停机之前才会调用这个刷新函数
+        void FlushLogToDisk();
 
         // 每隔一段时间将日志同步到异步日志器里
         void SyncLogLoop();

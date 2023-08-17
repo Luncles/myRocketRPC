@@ -16,10 +16,10 @@
 #include <memory>
 #include "tinypb_coder.h"
 #include "tinypb_protocol.h"
-#include "../../common/log.h"
-#include "../../common/util.h"
+#include "myRocketRPC/common/log.h"
+#include "myRocketRPC/common/util.h"
 
-namespace myRocket
+namespace myRocketRPC
 {
   // 将tinypb抽象协议对象转化为字节流，写入到sendbuffer中
   void TinyPBCoder::Encode(std::vector<AbstractProtocol::myAbstractProtocolPtr> &sendMessage, TCPBuffer::myTCPBufferPtr sendBuffer)

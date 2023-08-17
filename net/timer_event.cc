@@ -13,10 +13,10 @@
 #include <arpa/inet.h>
 #include <sys/socket.h>
 #include "timer_event.h"
-#include "/home/luncles/myRocketRPC/common/log.h"
-#include "/home/luncles/myRocketRPC/common/util.h"
+#include "myRocketRPC/common/log.h"
+#include "myRocketRPC/common/util.h"
 
-namespace myRocket
+namespace myRocketRPC
 {
   TimerEvent::TimerEvent(int interval, bool isRepeated, std::function<void()> CallBack) : myInterval(interval), myIsRepeated(isRepeated), myTask(CallBack)
   {
@@ -25,7 +25,7 @@ namespace myRocket
 
   void TimerEvent::ResetArriveTime()
   {
-    myArriveTime = GetNowMS() + myInterval;
+    myArriveTime = myRocketRPC::GetNowMS() + myInterval;
     DEBUGLOG("success create timer event, will excute at [%lld]", myArriveTime);
   }
 }

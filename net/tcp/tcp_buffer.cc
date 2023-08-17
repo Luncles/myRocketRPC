@@ -13,9 +13,9 @@
 #include <arpa/inet.h>
 #include <sys/socket.h>
 #include "tcp_buffer.h"
-#include "/home/luncles/myRocketRPC/common/log.h"
+#include "myRocketRPC/common/log.h"
 
-namespace myRocket
+namespace myRocketRPC
 {
   TCPBuffer::TCPBuffer(int size) : mySize(size)
   {

@@ -17,7 +17,7 @@
 #include <vector>
 #include "io_thread.h"
 
-namespace myRocket
+namespace myRocketRPC
 {
   class IOThreadGroup
   {

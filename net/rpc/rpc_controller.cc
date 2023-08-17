@@ -14,7 +14,7 @@
 #include <sys/socket.h>
 #include "rpc_controller.h"
 
-namespace myRocket
+namespace myRocketRPC
 {
   // reset函数在这里就是把各个成员变量还原
   void RpcController::Reset()

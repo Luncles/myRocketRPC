@@ -14,9 +14,9 @@
 #include <arpa/inet.h>
 #include <sys/socket.h>
 #include "abstract_protocol.h"
-#include "../tcp/tcp_buffer.h"
+#include "myRocketRPC/net/tcp/tcp_buffer.h"
 
-namespace myRocket
+namespace myRocketRPC
 {
   struct AbstractCoder
   {

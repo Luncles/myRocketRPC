@@ -17,15 +17,15 @@
 #include <memory>
 #include <map>
 #include <utility>
-#include "../eventloop.h"
-#include "../io_thread.h"
-#include "../fd_event.h"
-#include "net_addr.h"
-#include "tcp_buffer.h"
-#include "../coder/abstract_protocol.h"
-#include "../coder/abstract_coder.h"
+#include "myRocketRPC/net/eventloop.h"
+#include "myRocketRPC/net/io_thread.h"
+#include "myRocketRPC/net/fd_event.h"
+#include "myRocketRPC/net/tcp/net_addr.h"
+#include "myRocketRPC/net/tcp/tcp_buffer.h"
+#include "myRocketRPC/net/coder/abstract_protocol.h"
+#include "myRocketRPC/net/coder/abstract_coder.h"
 
-namespace myRocket
+namespace myRocketRPC
 {
   // 当前TCP连接所处的状态
   enum TcpState
@@ -98,6 +98,9 @@ namespace myRocket
 
     // 将接收对象和回调函数写入接收集合中
     void PushRecvMessage(const std::string &RecvMessageID, std::function<void(AbstractProtocol::myAbstractProtocolPtr)> recvCallBack);
+
+    // 将rpc响应发回rpc客户端
+    void ReplyRPCResponse(std::vector<AbstractProtocol::myAbstractProtocolPtr> &replyMessage);
 
   private:
     // 代表持有当前连接的io线程

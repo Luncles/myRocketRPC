@@ -14,9 +14,9 @@
 #include <sys/socket.h>
 
 #include "wakeup_fd_event.h"
-#include "/home/luncles/myRocketRPC/common/log.h"
+#include "myRocketRPC/common/log.h"
 
-namespace myRocket
+namespace myRocketRPC
 {
 
   void WakeUpFdEvent::WakeUp()

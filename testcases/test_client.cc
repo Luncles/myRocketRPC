@@ -13,18 +13,18 @@
 #include <arpa/inet.h>
 #include <sys/socket.h>
 #include <memory>
-#include "/home/luncles/myRocketRPC/common/config.h"
-#include "/home/luncles/myRocketRPC/common/log.h"
-#include "/home/luncles/myRocketRPC/net/eventloop.h"
-#include "/home/luncles/myRocketRPC/net/fd_event.h"
-#include "/home/luncles/myRocketRPC/net/timer.h"
-#include "/home/luncles/myRocketRPC/net/io_thread.h"
-#include "/home/luncles/myRocketRPC/net/io_thread_group.h"
-#include "../net/tcp/tcp_connection.h"
-#include "../net/tcp/tcp_client.h"
-#include "../net/coder/string_coder.h"
-#include "../net/coder/tinypb_coder.h"
-#include "../net/coder/tinypb_protocol.h"
+#include "myRocketRPC/common/config.h"
+#include "myRocketRPC/common/log.h"
+#include "myRocketRPC/net/eventloop.h"
+#include "myRocketRPC/net/fd_event.h"
+#include "myRocketRPC/net/timer.h"
+#include "myRocketRPC/net/io_thread.h"
+#include "myRocketRPC/net/io_thread_group.h"
+#include "myRocketRPC/net/tcp/tcp_connection.h"
+#include "myRocketRPC/net/tcp/tcp_client.h"
+#include "myRocketRPC/net/coder/string_coder.h"
+#include "myRocketRPC/net/coder/tinypb_coder.h"
+#include "myRocketRPC/net/coder/tinypb_protocol.h"
 
 void test_connect()
 {
@@ -65,18 +65,18 @@ void test_connect()
 
 void test_connect_client()
 {
-  myRocket::IPNetAddr::myNetAddrPtr addrPtr = std::make_shared<myRocket::IPNetAddr>("127.0.0.1", 12355);
+  myRocketRPC::IPNetAddr::myNetAddrPtr addrPtr = std::make_shared<myRocketRPC::IPNetAddr>("127.0.0.1", 12355);
   DEBUGLOG("create address [%s]", addrPtr->ToString().c_str());
-  myRocket::TcpClient tcpClient(addrPtr);
+  myRocketRPC::TcpClient tcpClient(addrPtr);
   tcpClient.ConnectServer([addrPtr]()
                           { DEBUGLOG("success connect to [%s]", addrPtr->ToString().c_str()); });
 }
 
 void test_tcp_client()
 {
-  myRocket::IPNetAddr::myNetAddrPtr addrPtr = std::make_shared<myRocket::IPNetAddr>("127.0.0.1", 12355);
+  myRocketRPC::IPNetAddr::myNetAddrPtr addrPtr = std::make_shared<myRocketRPC::IPNetAddr>("127.0.0.1", 12355);
   DEBUGLOG("create address [%s]", addrPtr->ToString().c_str());
-  myRocket::TcpClient tcpClient(addrPtr);
+  myRocketRPC::TcpClient tcpClient(addrPtr);
   tcpClient.ConnectServer([addrPtr, &tcpClient]()
                           { DEBUGLOG("success connect to [%s]", addrPtr->ToString().c_str());
 
@@ -86,27 +86,27 @@ void test_tcp_client()
   // message->info = "hello, myRocket";
   
   // test tinypb
-  std::shared_ptr<myRocket::TinyProtocol> message = std::make_shared<myRocket::TinyProtocol>();
+  std::shared_ptr<myRocketRPC::TinyProtocol> message = std::make_shared<myRocketRPC::TinyProtocol>();
   message->myMessageID = "123456789";
   message->myPBData = "hello, myRocket";
   DEBUGLOG("message id = [%s]", message->myMessageID.c_str());
   DEBUGLOG("my pb data = [%s]", message->myPBData.c_str());
-  tcpClient.WriteMessage(message, [](myRocket::AbstractProtocol::myAbstractProtocolPtr msgPtr)
+  tcpClient.WriteMessage(message, [](myRocketRPC::AbstractProtocol::myAbstractProtocolPtr msgPtr)
                          { DEBUGLOG("send message success"); });
 
-  tcpClient.ReadMessage(message->myMessageID, [](myRocket::AbstractProtocol::myAbstractProtocolPtr msgPtr) {
+  tcpClient.ReadMessage(message->myMessageID, [](myRocketRPC::AbstractProtocol::myAbstractProtocolPtr msgPtr) {
     
     // std::shared_ptr<myRocket::StringProtocol> message = std::dynamic_pointer_cast<myRocket::StringProtocol>(msgPtr);
     // DEBUGLOG("messageID[%s], get response [%s]", message->myMessageID.c_str(), message->info.c_str());
-    std::shared_ptr<myRocket::TinyProtocol> message = std::dynamic_pointer_cast<myRocket::TinyProtocol>(msgPtr);
+    std::shared_ptr<myRocketRPC::TinyProtocol> message = std::dynamic_pointer_cast<myRocketRPC::TinyProtocol>(msgPtr);
     DEBUGLOG("messageID[%s], get response [%s]", message->myMessageID.c_str(), message->myPBData.c_str());
   }); });
 }
 
 int main()
 {
-  myRocket::Config::SetGlobalConfig("/home/luncles/myRocketRPC/conf/myRocket.xml");
-  myRocket::Logger::InitGlobalLogger(1);
+  myRocketRPC::Config::SetGlobalConfig("/home/luncles/myRocketRPC/conf/myRocket.xml");
+  myRocketRPC::Logger::InitGlobalLogger(1);
 
   // test_connect();
   // test_connect_client();

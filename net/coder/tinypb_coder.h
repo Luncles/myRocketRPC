@@ -16,7 +16,7 @@
 #include "abstract_coder.h"
 #include "tinypb_protocol.h"
 
-namespace myRocket
+namespace myRocketRPC
 {
 #define TINYPB_MSG_ID_SIZE 128
 #define TINYPB_METHOD_NAME_SIZE 512

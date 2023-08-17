@@ -13,11 +13,12 @@
 #include <arpa/inet.h>
 #include <sys/socket.h>
 #include "tcp_client.h"
-#include "../../common/log.h"
-#include "../fd_event_group.h"
-#include "../../common/error_code.h"
+#include "myRocketRPC/common/log.h"
+#include "myRocketRPC/net/fd_event_group.h"
+#include "myRocketRPC/common/error_code.h"
+#include "myRocketRPC/net/eventloop.h"
 
-namespace myRocket
+namespace myRocketRPC
 {
 
   TcpClient::TcpClient(NetAddr::myNetAddrPtr serverAddress) : myServerAddr(serverAddress)

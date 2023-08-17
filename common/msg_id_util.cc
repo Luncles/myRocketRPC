@@ -17,7 +17,7 @@
 #include "msg_id_util.h"
 #include "log.h"
 
-namespace myRocket
+namespace myRocketRPC
 {
   static int messageIDLen = 20; // message id的长度
   static int randomFD = -1;     // 随机文件的句柄

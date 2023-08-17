@@ -15,7 +15,7 @@
 #include <sys/socket.h>
 #include "abstract_protocol.h"
 
-namespace myRocket
+namespace myRocketRPC
 {
   struct TinyProtocol : public AbstractProtocol
   {

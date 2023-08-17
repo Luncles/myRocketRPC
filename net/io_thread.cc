@@ -14,11 +14,11 @@
 #include <sys/socket.h>
 #include <sstream>
 
-#include "/home/luncles/myRocketRPC/common/log.h"
-#include "/home/luncles/myRocketRPC/common/util.h"
+#include "myRocketRPC/common/log.h"
+#include "myRocketRPC/common/util.h"
 #include "io_thread.h"
 
-namespace myRocket
+namespace myRocketRPC
 {
   IOThread::IOThread()
   {

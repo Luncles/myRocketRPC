@@ -16,10 +16,10 @@
 #include <vector>
 #include <functional>
 #include "timer.h"
-#include "/home/luncles/myRocketRPC/common/log.h"
-#include "/home/luncles/myRocketRPC/common/util.h"
+#include "myRocketRPC/common/log.h"
+#include "myRocketRPC/common/util.h"
 
-namespace myRocket
+namespace myRocketRPC
 {
   Timer::Timer() : FDEvent()
   {
@@ -203,8 +203,8 @@ namespace myRocket
       }
     }
 
-    // 保险起见，检查有没有遗漏的定时器任务
-    // ResetTimerArriveTime();
+    // 保险起见，检查有没有遗漏的定时器任务---最后修改，这一句必须加，不然有些定时任务只会触发一次
+    ResetTimerArriveTime();
 
     // 接下来执行超时任务的回调函数
     for (auto it : tmpTask)
