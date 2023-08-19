@@ -22,7 +22,8 @@ namespace myRocketRPC
         {
             return gPid;
         }
-        return getpid();
+        gPid = getpid();
+        return gPid;
     }
 
     pid_t GetThreadId()
@@ -31,7 +32,8 @@ namespace myRocketRPC
         {
             return gThreadId;
         }
-        return syscall(SYS_gettid); // 间接系统调用，获取真实的线程id唯一标识
+        gThreadId = syscall(SYS_gettid);
+        return gThreadId; // 间接系统调用，获取真实的线程id唯一标识
     }
 
     int64_t GetNowMS()
