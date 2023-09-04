@@ -119,6 +119,8 @@ namespace myRocketRPC
 
         AsyncLogger(const std::string &fileName, const std::string &filePath, int maxSize);
 
+        ~AsyncLogger();
+
         void Stop();
 
         // 将日志刷新到磁盘

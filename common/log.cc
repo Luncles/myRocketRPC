@@ -130,6 +130,7 @@ namespace myRocketRPC
         if (myType == 0)
         {
             printf("%s\n", msg.c_str());
+            return;
         }
         ScopeMutex<pMutex> scopeMutex(myMutex); // 加锁
         myBuffer.push_back(msg);
@@ -381,6 +382,22 @@ namespace myRocketRPC
     {
         // 设置为true，那么就会退出异步日志的循环了
         myStopFlag = true;
+    }
+
+    AsyncLogger::~AsyncLogger()
+    {
+        DEBUGLOG("~AsyncLogger");
+        sem_destroy(&fullSem);
+        sem_destroy(&emptySem);
+        sem_destroy(&loggerInitSem);
+
+        pthread_cond_destroy(&myCondition);
+
+        if (my_file_handler != nullptr)
+        {
+            fclose(my_file_handler);
+            my_file_handler = nullptr;
+        }
     }
 
     // 将日志刷新到磁盘

@@ -154,6 +154,22 @@ namespace myRocketRPC
             close(myFD);
 
             // 原来的套接字不好用，上面关闭掉了，现在再申请一个新的fd，之后才能进行下一次connect
+            // 因为 connect()函数调用失败后，socket()返回的描述的状态是未定义的，所以，需要关闭描述符，然后在创建一个新的
+            /*
+              connect函数原型
+
+              #include <sys/socket.h>
+
+              int connect(int socket, const struct sockaddr *address, socklen_t address_len);
+
+                查看connect的帮助文档，用法中有这么一段
+
+                APPLICATION USAGE
+
+              If connect() fails, the state of  the  socket  is  unspecified.   Conforming  applications
+
+              should close the file descriptor and create a new socket before attempting to reconnect.
+            */
             myFD = socket(myServerAddr->GetFamily(), SOCK_STREAM, 0);
           }
 

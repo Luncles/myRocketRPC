@@ -63,6 +63,7 @@ TEST_CASE_OUT := $(PATH_BIN)/test_log $(PATH_BIN)/test_eventloop $(PATH_BIN)/tes
 
 LIB_OUT := $(PATH_LIB)/librocket.a
 
+# $@ : 表示目标文件的名称，包含扩展名
 $(PATH_BIN)/test_log: $(LIB_OUT)
 	$(CXX) $(CXXFLAGS) $(PATH_TESTCASES)/test_log.cc -o $@ $(LIB_OUT) $(LIBS) -ldl -pthread
 
@@ -85,6 +86,7 @@ $(PATH_BIN)/test_rpc_server: $(LIB_OUT)
 $(LIB_OUT): $(COMM_OBJ) $(NET_OBJ) $(TCP_OBJ) $(CODER_OBJ) $(RPC_OBJ)
 	cd $(PATH_OBJ) && ar rcv librocket.a *.o && cp librocket.a ../lib/
 
+# $< : 表示依赖项中第一个依赖文件的名称
 $(PATH_OBJ)/%.o : $(PATH_COMM)/%.cc
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
@@ -106,7 +108,9 @@ $(PATH_OBJ)/%.o : $(PATH_RPC)/%.cc
 PRINT-% : ; @echo $* = $($*)
 
 
-# to clean 
+# to clean
+# 声明为伪目标，运行时不比较时间戳，直接运行  
+.PHONY:clean
 clean :
 	rm -f $(COMM_OBJ) $(NET_OBJ) $(TESTCASES) $(TEST_CASE_OUT) $(PATH_LIB)/librocket.a $(PATH_OBJ)/librocket.a $(PATH_OBJ)/*.o
 
